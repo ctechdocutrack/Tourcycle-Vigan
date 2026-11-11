@@ -1,0 +1,19 @@
+{
+  "name": "tourcycle-vigan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.13.2",
+    "jquery": "^4.0.0",
+    "leaflet": "^1.9.4",
+    "sweetalert2": "^11.26.25"
+  }
+}

@@ -1,0 +1,731 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TourCycle Vigan | Digital Tour Guide</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
+
+    <!-- Custom CSS (only if needed later) -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container p-2">
+
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold text-success" href="#home">
+                <i class="bi bi-bicycle me-2"></i>TourCycle Vigan
+            </a>
+
+            <!-- Desktop Navigation -->
+            <div class="d-none d-lg-flex align-items-center">
+                <ul class="navbar-nav align-items-center gap-2">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#destinations">Destinations</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#map">Explore Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#weather">Weather</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#emergency-contacts">Emergency Contacts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+
+                <a href="#map" class="btn btn-success btn-sm px-3 ms-3">
+                    <i class="bi bi-geo-alt me-1"></i> Find My Location
+                </a>
+            </div>
+
+            <!-- Mobile Offcanvas Toggle -->
+            <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNavbar" aria-controls="mobileNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Mobile Offcanvas -->
+            <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="mobileNavbar" aria-labelledby="mobileNavbarLabel">
+
+                <div class="offcanvas-header border-bottom">
+                    <h5 class="offcanvas-title fw-bold text-success" id="mobileNavbarLabel">
+                        <i class="bi bi-bicycle me-2"></i>TourCycle Vigan
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav gap-2">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#home" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-house me-2"></i>Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#destinations" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-geo-alt me-2"></i>Destinations
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#map" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-map me-2"></i>Explore Map
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#weather" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-cloud-sun me-2"></i>Weather
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#emergency-contacts" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-telephone me-2"></i>Emergency Contacts
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#about" data-bs-dismiss="offcanvas">
+                                <i class="bi bi-info-circle me-2"></i>About
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr>
+
+                    <a href="#map" class="btn btn-success w-100" data-bs-dismiss="offcanvas">
+                        <i class="bi bi-geo-alt me-2"></i>Find My Location
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="bg-success text-white py-5">
+        <div class="container py-lg-5">
+            <div class="row align-items-center g-4">
+
+                <div class="col-lg-7">
+                    <span class="badge bg-warning text-dark mb-3">
+                        Discover the Heritage City
+                    </span>
+
+                    <h1 class="display-4 fw-bold">
+                        Explore Vigan City with TourCycle
+                    </h1>
+
+                    <p class="lead mt-3">
+                        Discover historical landmarks, cultural attractions,
+                        and hidden destinations through an interactive digital
+                        tour guide.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <a href="#map" class="btn btn-warning btn-lg">
+                            <i class="bi bi-map me-2"></i>Explore Map
+                        </a>
+
+                        <a href="#destinations" class="btn btn-outline-light btn-lg">
+                            <i class="bi bi-compass me-2"></i>Discover Places
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-5 text-center">
+                    <i class="bi bi-buildings display-1"></i>
+                    <h3 class="fw-bold mt-3">Welcome to Vigan!</h3>
+                    <p class="mb-0">A journey through history and culture.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Tourist Destinations Section -->
+    <section id="destinations" class="py-5 bg-light">
+        <div class="container">
+
+            <div class="text-center mb-5">
+                <span class="badge bg-success mb-2">Explore Vigan</span>
+                <h2 class="fw-bold">Popular Destinations</h2>
+                <p class="text-muted">
+                    Discover the historical landmarks and beautiful attractions of Vigan City.
+                </p>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-text bg-white">
+                                <i class="bi bi-search"></i>
+                            </span>
+                            <input type="text" id="destinationSearch" class="form-control" placeholder="Search tourist destinations...">
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-md-6">
+                        <select id="destinationCategoryFilter" class="form-select">
+                            <option value="">All Categories</option>
+                            <option value="Historical Site">Historical Site</option>
+                            <option value="Historical Landmark">Historical Landmark</option>
+                            <option value="Church">Church</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4" id="destinationCardsContainer"></div>
+
+            <div id="noDestinationsMessage" class="text-center py-4 d-none">
+                <i class="bi bi-search display-4 text-muted"></i>
+                <h5 class="fw-bold mt-3">No Destinations Found</h5>
+                <p class="text-muted">Try searching for another destination or category.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destination Details Modal -->
+    <div class="modal fade" id="destinationModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="destinationTitle">
+                        Destination Details
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+                    <img id="destinationImage" src="" class="img-fluid rounded mb-3 w-100" alt="Destination photo" style="height: 300px; object-fit: cover;">
+                    <span class="badge bg-success mb-3" id="destinationCategory"></span>
+
+                    <h5 class="fw-bold">About this Place</h5>
+                    <p id="destinationDescription" class="text-muted"></p>
+
+                    <h5 class="fw-bold mt-4">Historical Background</h5>
+                    <p id="destinationHistory" class="text-muted"></p>
+
+                    <!-- Audio Tour Guide -->
+                    <div class="card bg-light border-0 mt-4">
+                        <div class="card-body">
+                            <h5 class="fw-bold">
+                                <i class="bi bi-headphones text-success me-2"></i>
+                                Audio Tour Guide
+                            </h5>
+
+                            <p class="text-muted small">
+                                Listen to the description and historical background of this destination.
+                            </p>
+
+                            <div class="mb-3">
+                                <label for="audioLanguage" class="form-label fw-semibold">
+                                    Narration Language
+                                </label>
+                                <select id="audioLanguage" class="form-select">
+                                    <option value="en-US">🇬🇧 English</option>
+                                    <option value="fil-PH">🇵🇭 Tagalog</option>
+                                    <option value="zh-CN">🇨🇳 Chinese (Mandarin)</option>
+                                    <option value="fr-FR">🇫🇷 French</option>
+                                    <option value="ja-JP">🇯🇵 Japanese</option>
+                                    <option value="ko-KR">🇰🇷 Korean</option>
+                                    <option value="es-ES">🇪🇸 Spanish</option>
+                                </select>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                <button type="button" id="playAudio" class="btn btn-success">
+                                    <i class="bi bi-play-fill me-1"></i> Play Audio
+                                </button>
+
+                                <button type="button" id="stopAudio" class="btn btn-outline-danger">
+                                    <i class="bi bi-stop-fill me-1"></i> Stop
+                                </button>
+                            </div>
+
+
+                            <!-- Route Guidance -->
+                            <hr class="my-4">
+
+                            <h5 class="fw-bold">
+                                <i class="bi bi-signpost-2 text-success me-2"></i>
+                                Route Guidance
+                            </h5>
+
+                            <p class="text-muted small">
+                                Find the route from your current location to this destination.
+                            </p>
+
+                            <button type="button" id="showRoute" class="btn btn-primary w-100">
+                                <i class="bi bi-map me-2"></i> Show Route
+                            </button>
+
+                            <div id="routeStatus" class="alert alert-light small mt-3 mb-0">
+                                Your route information will appear here.
+                            </div>
+
+
+                            <p id="audioStatus" class="small text-muted mt-3 mb-0">
+                                Audio guide is ready.
+                            </p>
+                        </div>
+                    </div>
+
+
+                    <div class="d-flex align-items-center gap-2 mt-4">
+                        <i class="bi bi-geo-alt-fill text-success"></i>
+                        <span id="destinationCoordinates" class="small text-muted"></span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Map Section -->
+    <section id="map" class="py-5">
+        <div class="container">
+
+            <div class="text-center mb-4">
+                <span class="badge bg-success mb-2">Explore Around</span>
+                <h2 class="fw-bold">Explore Vigan City Map</h2>
+                <p class="text-muted">
+                    Find tourist attractions and explore the heritage city.
+                </p>
+            </div>
+
+            <div class="row g-4">
+
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm overflow-hidden">
+                        <div class="ratio ratio-16x9">
+                            <div id="touristMap" class="position-absolute top-0 start-0 w-100 h-100"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="fw-bold">
+                                <i class="bi bi-geo-alt text-success me-2"></i>
+                                Your Location
+                            </h5>
+
+                            <p class="text-muted small">
+                                Find your current position on the map.
+                            </p>
+
+                            <button id="locateMe" class="btn btn-success w-100 mb-3">
+                                <i class="bi bi-crosshair me-2"></i>
+                                Find My Location
+                            </button>
+
+                            <div id="locationStatus" class="alert alert-light small mb-4">
+                                Your location has not been detected yet.
+                            </div>
+
+                            <!-- Route Information -->
+                            <div id="routeInfo" class="alert alert-success d-none">
+                                <h6 class="fw-bold">
+                                    <i class="bi bi-signpost-2 me-2"></i>Route Information
+                                </h6>
+
+                                <p class="small mb-1" id="routeDestination"></p>
+                                <p class="small mb-1" id="routeDistance"></p>
+                                <p class="small mb-0" id="routeDuration"></p>
+                            </div>
+
+
+                            <hr>
+
+                            <h6 class="fw-bold">Map Legend</h6>
+                            <p class="small mb-2">
+                                <i class="bi bi-geo-alt-fill text-danger me-2"></i>
+                                Tourist Attractions
+                            </p>
+                            <p class="small mb-0">
+                                <i class="bi bi-person-fill text-primary me-2"></i>
+                                Your Current Location
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Nearby Attractions Section -->
+    <section id="nearby" class="py-5 bg-light">
+        <div class="container">
+
+            <div class="text-center mb-4">
+                <span class="badge bg-success mb-2">Discover Nearby</span>
+                <h2 class="fw-bold">Nearby Tourist Attractions</h2>
+                <p class="text-muted">
+                    Discover attractions closest to your current location.
+                </p>
+            </div>
+
+            <div id="nearbyStatus" class="alert alert-info text-center">
+                Please detect your current location to find nearby attractions.
+            </div>
+
+            <div id="nearbyDestinations" class="row g-3">
+            </div>
+
+        </div>
+    </section>
+
+    <section id="weather" class="py-5">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">
+                        <i class="bi bi-cloud-sun text-primary me-2"></i>
+                        Weather Information
+                    </h2>
+                    <p class="text-muted mb-0">Current weather conditions in Vigan City, Ilocos Sur.</p>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                        <div>
+                            <h5 class="fw-bold mb-1">Vigan City</h5>
+                            <p class="text-muted small mb-0">
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                Ilocos Sur, Philippines
+                            </p>
+                        </div>
+
+                        <span class="badge bg-success">Live Weather</span>
+                    </div>
+
+                    <div id="weatherContent">
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-success" role="status"></div>
+                            <p class="text-muted mt-3 mb-0">Loading weather information...</p>
+                        </div>
+                    </div>
+
+                    <p id="weatherUpdated" class="text-muted small mt-4 mb-0"></p>
+
+                    <div class="text-end mt-3">
+                        <button type="button" id="refreshWeather" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-arrow-clockwise me-1"></i> Refresh Weather
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- <div class="alert alert-info mt-4 small">
+                <i class="bi bi-info-circle me-2"></i>
+                Weather information is provided by Open-Meteo and requires an internet connection.
+            </div> -->
+
+        </div>
+    </section>
+
+    <section id="emergency-contacts" class="py-5">
+        <div class="container">
+
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">
+                        <i class="bi bi-telephone-fill text-danger me-2"></i>
+                        Emergency Contact Information
+                    </h2>
+                    <p class="text-muted mb-0">Important emergency hotlines and assistance in Vigan City.</p>
+                </div>
+            </div>
+
+            <!-- Emergency Hotline -->
+            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div>
+                        <h5 class="fw-bold mb-1">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            National Emergency Hotline
+                        </h5>
+                        <p class="mb-0 small">Police, Fire and Medical Emergencies – Available 24/7</p>
+                    </div>
+                    <a href="tel:911" class="btn btn-danger fw-bold">
+                        <i class="bi bi-telephone-fill me-1"></i> Call 911
+                    </a>
+                </div>
+            </div>
+
+            <!-- Local Emergency Contacts -->
+            <h5 class="fw-bold mb-3">Vigan City Emergency Services</h5>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <i class="bi bi-shield-fill text-primary fs-2"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Vigan City Police Station</h6>
+                                    <small class="text-muted">Police Assistance</small>
+                                </div>
+                            </div>
+                            <p class="fw-bold mb-3">(077) 722-0890</p>
+                            <a href="tel:0777220890" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="bi bi-telephone me-1"></i> Call Police Station
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <i class="bi bi-fire text-danger fs-2"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Vigan Fire Station</h6>
+                                    <small class="text-muted">Fire and Rescue Assistance</small>
+                                </div>
+                            </div>
+                            <p class="fw-bold mb-3">(077) 722-0990</p>
+                            <a href="tel:0777220990" class="btn btn-outline-danger btn-sm w-100">
+                                <i class="bi bi-telephone me-1"></i> Call Fire Station
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center gap-3 mb-3">
+                                <i class="bi bi-hospital-fill text-success fs-2"></i>
+                                <div>
+                                    <h6 class="fw-bold mb-0">Gabriela Silang Hospital</h6>
+                                    <small class="text-muted">Emergency Room</small>
+                                </div>
+                            </div>
+                            <p class="fw-bold mb-3">0968-185-1003</p>
+                            <a href="tel:09681851003" class="btn btn-outline-success btn-sm w-100">
+                                <i class="bi bi-telephone me-1"></i> Call Hospital
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- <div class="alert alert-warning small mt-4 mb-0">
+                <i class="bi bi-info-circle me-2"></i>
+                For life-threatening emergencies, call 911. Local contact numbers must be verified before public deployment.
+            </div> -->
+
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-5 bg-light">
+        <div class="container">
+
+            <div class="row align-items-center g-4">
+
+                <div class="col-lg-6">
+                    <span class="badge bg-success mb-2">About the Project</span>
+                    <h2 class="fw-bold mb-3">Discover Vigan with TourCycle</h2>
+
+                    <p class="text-muted">
+                        TourCycle Vigan is a digital tour guide designed to help
+                        local and foreign tourists explore the historical landmarks,
+                        cultural attractions, and beautiful destinations of Vigan City.
+                    </p>
+
+                    <p class="text-muted">
+                        Through interactive maps, GPS location, audio tour guides,
+                        route guidance, weather updates, and emergency contact
+                        information, tourists can enjoy a more convenient and
+                        informative travel experience.
+                    </p>
+
+                    <p class="text-muted mb-0">
+                        Our goal is to make exploring Vigan City easier, safer,
+                        and more accessible through technology.
+                    </p>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="row g-3">
+
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm h-100 text-center">
+                                <div class="card-body p-4">
+                                    <i class="bi bi-map display-5 text-success"></i>
+                                    <h6 class="fw-bold mt-3">Interactive Map</h6>
+                                    <p class="text-muted small mb-0">
+                                        Explore tourist destinations and routes.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm h-100 text-center">
+                                <div class="card-body p-4">
+                                    <i class="bi bi-headphones display-5 text-success"></i>
+                                    <h6 class="fw-bold mt-3">Audio Guide</h6>
+                                    <p class="text-muted small mb-0">
+                                        Learn about the history of each destination.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm h-100 text-center">
+                                <div class="card-body p-4">
+                                    <i class="bi bi-cloud-sun display-5 text-success"></i>
+                                    <h6 class="fw-bold mt-3">Weather Updates</h6>
+                                    <p class="text-muted small mb-0">
+                                        Check current weather conditions.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="card border-0 shadow-sm h-100 text-center">
+                                <div class="card-body p-4">
+                                    <i class="bi bi-shield-check display-5 text-success"></i>
+                                    <h6 class="fw-bold mt-3">Travel Assistance</h6>
+                                    <p class="text-muted small mb-0">
+                                        Access important emergency contacts.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    
+    <!-- Footer -->
+    <footer class="bg-dark text-white pt-5 pb-3">
+        <div class="container">
+
+            <div class="row g-4">
+
+                <!-- Brand and Description -->
+                <div class="col-lg-5">
+                    <h4 class="fw-bold text-success mb-3">
+                        <i class="bi bi-bicycle me-2"></i>TourCycle Vigan
+                    </h4>
+                    <p class="text-light opacity-75">
+                        Your digital tour guide to discovering the historical
+                        landmarks, cultural heritage, and beautiful destinations
+                        of Vigan City.
+                    </p>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="col-6 col-lg-3">
+                    <h6 class="fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="#home" class="text-white-50 text-decoration-none">Home</a></li>
+                        <li class="mb-2"><a href="#destinations" class="text-white-50 text-decoration-none">Destinations</a></li>
+                        <li class="mb-2"><a href="#map" class="text-white-50 text-decoration-none">Explore Map</a></li>
+                        <li class="mb-2"><a href="#nearby" class="text-white-50 text-decoration-none">Nearby Attractions</a></li>
+                        <li class="mb-2"><a href="#about" class="text-white-50 text-decoration-none">About Us</a></li>
+                    </ul>
+                </div>
+
+                <!-- Useful Information -->
+                <div class="col-6 col-lg-4">
+                    <h6 class="fw-bold mb-3">Useful Information</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <a href="#weather" class="text-white-50 text-decoration-none">
+                                <i class="bi bi-cloud-sun me-2"></i>Weather Information
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="views/emergency_contact.html" class="text-white-50 text-decoration-none">
+                                <i class="bi bi-telephone me-2"></i>Emergency Contacts
+                            </a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="#map" class="text-white-50 text-decoration-none">
+                                <i class="bi bi-geo-alt me-2"></i>Find My Location
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <div class="text-center">
+                <p class="text-white-50 small mb-0">
+                    &copy; 2026 TourCycle Vigan. All Rights Reserved.
+                </p>
+                <p class="text-white-50 small mt-2 mb-0">
+                    Explore Vigan. Experience History.
+                </p>
+            </div>
+
+        </div>
+    </footer>
+
+
+    <!-- jQuery -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Leaflet JS -->
+    <script src="node_modules/leaflet/dist/leaflet.js"></script>
+
+    <!-- SweetAlert2 -->
+    <script src="node_modules/sweetalert2/dist/sweetalert2.all.min.js"></script>
+
+    <!-- Application JS -->
+    <script src="assets/js/app.js"></script>
+
+</body>
+</html>
