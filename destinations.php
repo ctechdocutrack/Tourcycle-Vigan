@@ -2,7 +2,7 @@
 <?php include 'assets/includes/sidebar.php'; ?>
 
 <!-- Destinations Page -->
-<section id="map" class="position-relative vh-100 pb-5 px-5 py-3">
+<section id="map" class="position-relative min-vh-100 px-4 px-lg-5 py-4 pb-5 mb-5">
 
     <!-- Page Header -->
     <div class="mb-4">

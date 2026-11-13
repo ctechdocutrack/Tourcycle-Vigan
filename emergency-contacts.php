@@ -2,7 +2,7 @@
 <?php include 'assets/includes/header.php'; ?>
 <?php include 'assets/includes/sidebar.php'; ?>
 
-<section id="map" class="position-relative min-vh-100 px-4 px-lg-5 py-4">
+<section id="map" class="position-relative min-vh-100 px-4 px-lg-5 py-4 pb-5 mb-5">
 
     <div class="mb-4">
         <span class="text-danger fw-semibold text-uppercase small">Stay Safe</span>

@@ -31,19 +31,19 @@
             <span class="sidebar-text ms-3">Destinations</span>
         </a>
 
-        <a href="#nearby" class="sidebar-link nav-link text-dark rounded-3 p-3 mb-2">
+        <!-- <a href="#nearby" class="sidebar-link nav-link text-dark rounded-3 p-3 mb-2">
             <i class="bi bi-compass fs-5"></i>
             <span class="sidebar-text ms-3">Nearby Attractions</span>
-        </a>
+        </a> -->
 
         <hr>
 
         <p class="sidebar-text text-muted small fw-bold px-3">INFORMATION</p>
 
-        <a href="weather-information.php" class="sidebar-link nav-link text-dark rounded-3 p-3 mb-2">
+        <!-- <a href="weather-information.php" class="sidebar-link nav-link text-dark rounded-3 p-3 mb-2">
             <i class="bi bi-cloud-sun fs-5"></i>
             <span class="sidebar-text ms-3">Weather</span>
-        </a>
+        </a> -->
 
         <a href="emergency-contacts.php" class="sidebar-link nav-link text-dark rounded-3 p-3 mb-2">
             <i class="bi bi-telephone fs-5"></i>
@@ -86,17 +86,17 @@
             <small>Places</small>
         </a>
 
-        <a href="#nearby"
+        <!-- <a href="#nearby"
             class="nav-link text-secondary d-flex flex-column align-items-center gap-1">
             <i class="bi bi-compass fs-4"></i>
             <small>Nearby</small>
-        </a>
+        </a> -->
 
-        <a href="weather-information.php"
+        <!-- <a href="weather-information.php"
             class="nav-link text-secondary d-flex flex-column align-items-center gap-1">
             <i class="bi bi-cloud-sun fs-4"></i>
             <small>Weather</small>
-        </a>
+        </a> -->
 
         <a href="emergency-contacts.php"
             class="nav-link text-secondary d-flex flex-column align-items-center gap-1">

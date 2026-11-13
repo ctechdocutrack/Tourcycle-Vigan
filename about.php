@@ -2,10 +2,10 @@
 <?php include 'assets/includes/header.php'; ?>
 <?php include 'assets/includes/sidebar.php'; ?>
 
-<section id="map" class="position-relative min-vh-100 px-4 px-lg-5 py-4">
+<section id="map" class="position-relative min-vh-100 px-4 px-lg-5 py-4 pb-5 mb-5">
 
     <!-- Page Header -->
-    <div class="text-center py-4 mb-4">
+    <div class="text-center mb-4">
         <span class="text-success fw-semibold text-uppercase small">Discover. Explore. Experience.</span>
         <h1 class="display-5 fw-bold mt-2">About TourCycle Vigan</h1>
         <p class="text-muted mx-auto" style="max-width: 650px;">

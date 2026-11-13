@@ -8,23 +8,54 @@
 <section id="map" class="position-relative vh-100 pb-5">
 
     <style>
+    /* Search Bar - Desktop */
+    #mapSearchContainer {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        left: auto;
+        transform: none;
+        width: calc(100% - 32px);
+        max-width: 400px;
+        z-index: 1000;
+        margin: 0 !important;
+    }
+
+    /* Search Bar - Mobile */
     @media (max-width: 767.98px) {
         #mapSearchContainer {
             left: 50%;
-            right: auto !important;
+            right: auto;
             transform: translateX(-50%);
-            width: calc(100% - 2rem) !important;
+            width: calc(100% - 32px);
             max-width: 400px;
         }
     }
+    /* Destination Panel - Desktop */
+    #mapDestinationPanel {
+        top: 16px;
+        right: 16px;
+        left: auto;
+        transform: none;
+        width: calc(100% - 32px);
+        max-width: 400px;
+        max-height: calc(100% - 32px);
+        z-index: 999;
+        margin: 0 !important;
+    }
+
+    /* Destination Panel - Mobile */
     @media (max-width: 767.98px) {
         #mapDestinationPanel {
             left: 50%;
             right: auto !important;
             transform: translateX(-50%);
-            width: calc(100% - 2rem) !important;
+            width: calc(100% - 32px) !important;
             max-width: 400px;
-            max-height: calc(100% - 5rem) !important;
+            max-height: calc(100vh - 90px) !important;
+            bottom: 100px !important; 
+            top: 16px !important;   
+            overflow-y: auto !important;
         }
     }
 
@@ -130,9 +161,7 @@
     }
     </style>
     <!-- Search Bar -->
-    <div id="mapSearchContainer"
-        class="position-absolute top-0 end-0 m-3 w-100"
-        style="max-width: 400px; z-index: 1000;">
+    <div id="mapSearchContainer">
 
         <div class="input-group bg-white rounded-top-4 p-1 shadow overflow-hidden">
 
@@ -159,7 +188,7 @@
 
     <!-- Destination Information Panel -->
     <div id="mapDestinationPanel"
-    class="position-absolute top-0 end-0 bg-white shadow rounded-4 overflow-auto d-none m-3"
+    class="position-absolute bg-white shadow rounded-4 overflow-auto d-none"
     style="max-width: 400px; max-height: calc(100% - 2rem); z-index: 999;">
 
         <!-- Destination Image -->
