@@ -22,7 +22,7 @@
     }
 
     /* Search Bar - Mobile */
-    @media (max-width: 767.98px) {
+    @media (max-width: 700px) {
         #mapSearchContainer {
             left: 50%;
             right: auto;
@@ -45,7 +45,7 @@
     }
 
     /* Destination Panel - Mobile */
-    @media (max-width: 767.98px) {
+    @media (max-width: 700px) {
         #mapDestinationPanel {
             left: 50%;
             right: auto !important;
@@ -56,6 +56,11 @@
             bottom: 100px !important; 
             top: 16px !important;   
             overflow-y: auto !important;
+        }
+    }
+    @media (max-width: 700px) {
+        #openMapPanel {
+            bottom: 95px !important;
         }
     }
 
@@ -159,6 +164,7 @@
             filter: drop-shadow(0 0 10px rgba(13, 110, 253, 1));
         }
     }
+
     </style>
     <!-- Search Bar -->
     <div id="mapSearchContainer">
@@ -214,8 +220,14 @@
 
             <h5 id="mapDestinationName" class="fw-bold mb-2"></h5>
 
-            <p id="mapDestinationDescription"
-                class="text-muted small"></p>
+            <div class="mb-2">
+                <p id="mapDestinationDescription" class="text-muted small mb-1"></p>
+
+                <button type="button" id="toggleDescription"
+                    class="btn btn-link btn-sm p-0 text-decoration-none">
+                    Show More
+                </button>
+            </div>
 
             <!-- Audio Tour Guide -->
             <div class="card bg-light border-0 mt-4">
@@ -239,13 +251,9 @@
                         </label>
 
                         <select id="audioLanguage" class="form-select">
-                            <option value="en-US">🇬🇧 English</option>
-                            <option value="fil-PH">🇵🇭 Tagalog</option>
-                            <option value="zh-CN">🇨🇳 Chinese (Mandarin)</option>
-                            <option value="fr-FR">🇫🇷 French</option>
-                            <option value="ja-JP">🇯🇵 Japanese</option>
-                            <option value="ko-KR">🇰🇷 Korean</option>
-                            <option value="es-ES">🇪🇸 Spanish</option>
+                            <option value="en">🇬🇧 English</option>
+                            <option value="tl">🇵🇭 Tagalog</option>
+                            <option value="ilo">🇵🇭 Ilokano</option>
                         </select>
 
                     </div>
@@ -259,7 +267,7 @@
                         </button>
 
                         <button type="button" id="stopAudio"
-                            class="btn btn-outline-danger">
+                            class="btn btn-outline-danger d-none">
                             <i class="bi bi-stop-fill me-1"></i>
                             Stop
                         </button>
@@ -321,6 +329,16 @@
 
         </div>
     </div>
+
+    <style>
+    
+    </style>
+    <!-- Reopen Destination Panel Button -->
+    <button type="button" id="openMapPanel"
+        class="btn btn-success rounded-circle shadow position-absolute d-none"
+        style="bottom: 20px; right: 15px; width: 50px; height: 50px; z-index: 2000;">
+        <i class="bi bi-info-lg"></i>
+    </button>
 
     <!-- Main Map -->
     <div id="touristMap" class="position-absolute top-0 start-0 w-100 h-100"></div>

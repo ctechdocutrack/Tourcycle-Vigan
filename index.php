@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,6 +65,36 @@
         </div>
     </main>
 
+    <!-- Language Selection Screen -->
+    <main id="languageScreen" class="vh-100 bg-dark text-white d-none">
+        <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center p-4">
+
+            <h2 class="fw-bold mb-3">Choose Your Language</h2>
+
+            <p class="text-white-50 mb-4">
+                Select your preferred language for the tour.
+            </p>
+
+            <div class="d-grid gap-3 w-100" style="max-width: 350px;">
+
+                <button type="button" class="btn btn-light btn-lg language-option" data-language="en">
+                    🇺🇸 English
+                </button>
+
+                <button type="button" class="btn btn-light btn-lg language-option" data-language="tl">
+                    🇵🇭 Tagalog
+                </button>
+
+                <button type="button" class="btn btn-light btn-lg language-option" data-language="ilo">
+                    🇵🇭 Ilokano
+                </button>
+
+            </div>
+
+        </div>
+    </main>
+
+
     <script>
         const startTourSlider = document.getElementById('startTourSlider');
         const welcomeScreen = document.getElementById('welcomeScreen');
@@ -131,10 +160,25 @@
             );
 
             transition.onfinish = function () {
-                window.location.href = 'maps.php';
+                welcomeScreen.classList.add('d-none');
+                document.getElementById('languageScreen').classList.remove('d-none');
             };
 
         }
+        // Language Selection
+        document.querySelectorAll('.language-option').forEach(button => {
+
+            button.addEventListener('click', function () {
+
+                const selectedLanguage = this.dataset.language;
+
+                sessionStorage.setItem('selectedLanguage', selectedLanguage);
+
+                window.location.href = 'maps.php';
+
+            });
+
+        });
     </script>
 
 </body>

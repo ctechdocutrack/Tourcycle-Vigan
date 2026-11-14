@@ -37,49 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // 2. DESTINATION DATA
     // ==========================================
 
-    const destinations = [
-        {
-            name: 'Calle Crisologo',
-            category: 'Historical Site',
-            coordinates: [17.5747, 120.3869],
-            image: 'assets/images/calle-crisologo.jpg',
-            description: 'Calle Crisologo is one of the most famous heritage streets in Vigan City. It is known for its Spanish colonial houses, cobblestone streets, antique shops, and traditional architecture.',
-            history: 'The street preserves the architectural character of the Spanish colonial period. Its heritage houses reflect the cultural and historical development of Vigan.'
-        },
-        {
-            name: 'Plaza Salcedo',
-            category: 'Historical Landmark',
-            coordinates: [17.5748, 120.3876],
-            image: 'assets/images/plaza-salcedo.jpg',
-            description: 'Plaza Salcedo is a historic public plaza located in the heart of Vigan City. It is known for its dancing fountain and surrounding historical landmarks.',
-            history: 'The plaza is named after Juan de Salcedo, who established the Spanish settlement in Vigan in 1572. It has served as an important public space throughout the city’s history.'
-        },
-        {
-            name: 'Bantay Bell Tower',
-            category: 'Historical Landmark',
-            coordinates: [17.5845, 120.3895],
-            image: 'assets/images/bantay-bell-tower.jpg',
-            description: 'Bantay Bell Tower is a famous historical landmark located in Bantay, Ilocos Sur, near Vigan City.',
-            history: 'The bell tower is associated with the historic St. Augustine Parish Church. It is one of the recognizable heritage landmarks in the area.'
-        },
-        {
-            name: 'Vigan Cathedral',
-            category: 'Church',
-            coordinates: [17.5744, 120.3870],
-            image: 'assets/images/vigan-cathedral.jpg',
-            description: 'Vigan Cathedral, also known as St. Paul Metropolitan Cathedral, is a historic Catholic church located near Plaza Salcedo in Vigan City.',
-            history: 'The cathedral is an important religious and historical landmark in Vigan. Its present structure reflects the Spanish colonial influence on the architecture and religious heritage of the city.'
-        },
-        {
-            name: 'Syquia Mansion',
-            category: 'Historical Landmark',
-            coordinates: [17.57103, 120.3899],
-            image: 'assets/images/syquia-mansion.jpg',
-            description: 'Syquia Mansion is a historic ancestral house in Vigan City. It is now a museum showcasing the architecture, furniture, family heirlooms, and historical artifacts of the Syquia family.',
-            history: 'The original structure was built in 1830 by Don Justo Angco. In 1875, it was given as a dowry to his daughter Estefania when she married Gregorio Syquia. The mansion is also connected to former Philippine President Elpidio Quirino, who married Alicia Syquia.'
-        }
-    ];
-
+    let destinations = [];
 
     // ==========================================
     // 3. MAP VARIABLES
@@ -118,6 +76,40 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==========================================
 
     const destinationPanel = document.getElementById('mapDestinationPanel');
+    const openMapPanel = document.getElementById('openMapPanel');
+
+    // ==========================================
+    // DESTINATION DESCRIPTION TOGGLE
+    // ==========================================
+
+    function displayDescription(description) {
+
+        const descriptionElement = document.getElementById('mapDestinationDescription');
+        const toggleButton = document.getElementById('toggleDescription');
+
+        const maxLength = 180;
+        let expanded = false;
+
+        function updateDescription() {
+
+            if (expanded || description.length <= maxLength) {
+                descriptionElement.textContent = description;
+                toggleButton.textContent = 'Show Less';
+            } else {
+                descriptionElement.textContent = description.substring(0, maxLength) + '...';
+                toggleButton.textContent = 'Show More';
+            }
+
+            toggleButton.classList.toggle('d-none', description.length <= maxLength);
+        }
+
+        toggleButton.onclick = function () {
+            expanded = !expanded;
+            updateDescription();
+        };
+
+        updateDescription();
+    }
 
     function selectDestination(destination) {
 
@@ -126,14 +118,14 @@ document.addEventListener('DOMContentLoaded', function () {
         mapSearch.value = destination.name;
         searchResults.classList.add('d-none');
 
-        document.getElementById('mapDestinationImage').src = destination.image;
+        document.getElementById('mapDestinationImage').src = 'admin/' + destination.image.replace(/^\/+/, '');
         document.getElementById('mapDestinationImage').alt = destination.name;
 
         document.getElementById('mapDestinationName').textContent = destination.name;
 
         document.getElementById('mapDestinationCategory').textContent = destination.category;
 
-        document.getElementById('mapDestinationDescription').textContent = destination.description;
+        displayDescription(destination.description);
 
         document.getElementById('destinationCoordinates').textContent =
             `Latitude: ${destination.coordinates[0]}, Longitude: ${destination.coordinates[1]}`;
@@ -155,11 +147,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Close Destination Panel
     document.getElementById('closeMapPanel').addEventListener('click', function () {
-
         destinationPanel.classList.add('d-none');
 
-        window.speechSynthesis.cancel();
+        if (navigationActive) {
+            openMapPanel.classList.remove('d-none');
+        }
 
+        window.speechSynthesis.cancel();
+    });
+    // Reopen Destination Panel
+    openMapPanel.addEventListener('click', function () {
+        destinationPanel.classList.remove('d-none');
+        openMapPanel.classList.add('d-none');
     });
 
 
@@ -201,7 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    renderMapMarkers();
+    // renderMapMarkers();
 
 
     // ==========================================
@@ -212,18 +211,18 @@ document.addEventListener('DOMContentLoaded', function () {
     const searchResults = document.getElementById('mapSearchResults');
 
     // AUTO OPEN DESTINATION FROM URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const destinationSlug = urlParams.get('destination');
+    // const urlParams = new URLSearchParams(window.location.search);
+    // const destinationSlug = urlParams.get('destination');
 
-    if (destinationSlug) {
-        const destination = destinations.find(item =>
-            item.name.toLowerCase().replace(/\s+/g, '-') === destinationSlug
-        );
+    // if (destinationSlug) {
+    //     const destination = destinations.find(item =>
+    //         item.name.toLowerCase().replace(/\s+/g, '-') === destinationSlug
+    //     );
 
-        if (destination) {
-            selectDestination(destination);
-        }
-    }
+    //     if (destination) {
+    //         selectDestination(destination);
+    //     }
+    // }
 
     function renderSearchResults(searchValue) {
 
@@ -294,7 +293,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('clearMapSearch').addEventListener('click', function () {
 
         // Clear Search Bar
-        mapSearch.value = '';
+        // mapSearch.value = '';
 
         // Hide Search Results
         searchResults.classList.add('d-none');
@@ -302,11 +301,20 @@ document.addEventListener('DOMContentLoaded', function () {
         // Close Destination Information Panel
         destinationPanel.classList.add('d-none');
 
+        if (navigationActive) {
+            openMapPanel.classList.remove('d-none');
+        }
+
+        if (!navigationActive) {
+            mapSearch.value = '';
+            selectedDestination = null;
+        }
+
         // Stop Audio Narration
         window.speechSynthesis.cancel();
 
         // Reset Selected Destination
-        selectedDestination = null;
+        // selectedDestination = null;
 
         mapSearch.focus();
 
@@ -408,78 +416,108 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     document.getElementById('locateMeMap').addEventListener('click', locateUser);
-
-
+  
     // ==========================================
     // 8. AUDIO TOUR GUIDE
     // ==========================================
 
     const audioLanguage = document.getElementById('audioLanguage');
+    // Restore Selected Language from Welcome Screen
+    audioLanguage.value = sessionStorage.getItem('selectedLanguage') || 'en';
     const audioStatus = document.getElementById('audioStatus');
+    const audioPlayer = new Audio();
+    const playAudioButton = document.getElementById('playAudio');
+    const stopAudioButton = document.getElementById('stopAudio');
 
-    document.getElementById('playAudio').addEventListener('click', function () {
+    playAudioButton.addEventListener('click', function () {
 
         if (!selectedDestination) {
-
             audioStatus.textContent = 'Please select a destination first.';
-
             return;
         }
 
-        if (!('speechSynthesis' in window)) {
-
-            audioStatus.textContent = 'Your browser does not support audio narration.';
-
+        if (!audioPlayer.paused) {
+            audioPlayer.pause();
             return;
         }
 
-        window.speechSynthesis.cancel();
+        const language = audioLanguage.value;
+        const audioPath = selectedDestination.audio?.[language];
 
-        const narration = new SpeechSynthesisUtterance(
-            `${selectedDestination.name}. 
-            ${selectedDestination.description}
-            Historical Background.
-            ${selectedDestination.history}`
-        );
+        if (!audioPath) {
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            audioPlayer.removeAttribute('src');
+            audioStatus.textContent = 'Audio file is not yet available for this language.';
+            return;
+        }
 
-        narration.lang = audioLanguage.value;
-        narration.rate = 0.9;
-        narration.pitch = 1;
+        if (audioPlayer.src && !audioPlayer.ended) {
+            audioPlayer.play().catch(function () {
+                audioStatus.textContent = 'Unable to resume audio.';
+            });
+            return;
+        }
 
-        narration.onstart = function () {
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
 
+        audioPlayer.src = 'admin/' + audioPath.replace(/^\/+/, '');
+
+        audioPlayer.onplay = function () {
             audioStatus.textContent = 'Playing audio narration...';
-
+            playAudioButton.innerHTML = '<i class="bi bi-pause-fill me-1"></i> Pause Audio';
+            document.getElementById('stopAudio').classList.remove('d-none');
         };
 
-        narration.onend = function () {
+        audioPlayer.onpause = function () {
+            audioStatus.textContent = 'Paused audio narration...';
+            playAudioButton.innerHTML = '<i class="bi bi-play-fill me-1"></i> Play Audio';
+        };
 
+        audioPlayer.onended = function () {
             audioStatus.textContent = 'Audio narration completed.';
-
+            stopAudioButton.classList.add('d-none');
+            playAudioButton.innerHTML = '<i class="bi bi-play-fill me-1"></i> Play Audio';
         };
 
-        narration.onerror = function () {
-
-            audioStatus.textContent = 'Unable to play audio narration.';
-
+        audioPlayer.onerror = function () {
+            audioStatus.textContent = 'Unable to play audio file.';
         };
 
-        window.speechSynthesis.speak(narration);
+        audioPlayer.play().catch(function () {
+            audioStatus.textContent = 'Unable to play audio file.';
+        });
 
     });
-
 
     // Stop Audio
     document.getElementById('stopAudio').addEventListener('click', function () {
 
-        window.speechSynthesis.cancel();
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        playAudioButton.innerHTML = '<i class="bi bi-play-fill me-1"></i> Play Audio';
 
         audioStatus.textContent = 'Audio narration stopped.';
+        this.classList.add('d-none');
 
     });
 
+    // Stop audio when language changes
+    audioLanguage.addEventListener('change', function () {
+        sessionStorage.setItem('selectedLanguage', this.value);
 
-    
+        audioPlayer.pause();
+        audioPlayer.currentTime = 0;
+        audioPlayer.removeAttribute('src');
+
+        stopAudioButton.classList.add('d-none');
+        playAudioButton.innerHTML = '<i class="bi bi-play-fill me-1"></i> Play Audio';
+
+        audioStatus.textContent = 'Audio language changed.';
+
+    });
+
     // ==========================================
     // 9. ROUTE GUIDANCE
     // ==========================================
@@ -649,6 +687,54 @@ document.addEventListener('DOMContentLoaded', function () {
         button.disabled = false;
 
     });
+
+    // ==========================================
+    // LOAD DESTINATIONS FROM DATABASE
+    // ==========================================
+
+    async function loadDestinations() {
+
+        try {
+
+            const response = await fetch('api/destinations.php');
+
+            if (!response.ok) {
+                throw new Error('Failed to load destinations.');
+            }
+
+            const result = await response.json();
+
+            if (!result.success) {
+                throw new Error(result.message || 'Unable to retrieve destinations.');
+            }
+
+            destinations = result.data;
+
+            renderMapMarkers();
+
+            // AUTO OPEN DESTINATION FROM URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const destinationId = urlParams.get('destination');
+
+            if (destinationId) {
+                const destination = destinations.find(item =>
+                    String(item.id) === destinationId
+                );
+
+                if (destination) {
+                    selectDestination(destination);
+                }
+            }
+
+        } catch (error) {
+
+            console.error('Destination loading error:', error);
+
+        }
+
+    }
+
+    loadDestinations();
 
     // ==========================================
     // 10. LIVE NAVIGATION
@@ -920,6 +1006,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 userLocation = newLocation;
+                if (navigationStatus.textContent !== 'Navigation Started') {
+                    navigationStatus.textContent = 'Navigation Started';
+
+                    setTimeout(function () {
+                        if (navigationActive) {
+                            destinationPanel.classList.add('d-none');
+                            openMapPanel.classList.remove('d-none');
+                        }
+                    }, 1000);
+                }
                 previousUserLocation = newLocation;
 
                 // Create or update directional marker
@@ -981,10 +1077,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         navigationActive = false;
+        openMapPanel.classList.add('d-none');
+        destinationPanel.classList.remove('d-none');
+
+        // Restore normal location icon
+        if (userMarker) {
+            userMarker.setIcon(new L.Icon.Default());
+            userMarker.setZIndexOffset(0);
+        }
 
         // Restore normal map orientation
-        touristMap.setBearing(0);
-        touristMap.setPitch(0);
+        if (typeof touristMap.setBearing === 'function') {
+            touristMap.setBearing(0);
+        }
+
+        if (typeof touristMap.setPitch === 'function') {
+            touristMap.setPitch(0);
+        }
 
         if (userLocation) {
             touristMap.setView(userLocation, 17);
@@ -1019,7 +1128,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     });
 
-    endNavigationButton.addEventListener('click', stopNavigation);
+    endNavigationButton.addEventListener('click', function () {
+        stopNavigation();
+    });
 
 
 
