@@ -1,5 +1,12 @@
-<?php include 'includes/admin-header.php'; ?>
-<?php include 'includes/flash-alert.php'; ?>
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+include 'includes/admin-header.php';
+include 'includes/flash-alert.php';
+?>
+
 <div class="container-fluid min-vh-100">
     <div class="row min-vh-100">
 
