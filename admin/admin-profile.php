@@ -25,12 +25,21 @@ if (!$userQuery || mysqli_num_rows($userQuery) === 0) {
 
 $user = mysqli_fetch_assoc($userQuery);
 
-$driverQuery = mysqli_query($conn, "
-    SELECT admin_id, username, qr_token
-    FROM admin
-    WHERE role = 'driver'
-    ORDER BY username ASC
-");
+if ($user['role'] === 'admin') {
+    $driverQuery = mysqli_query($conn, "
+        SELECT admin_id, username, qr_token
+        FROM admin
+        WHERE role = 'driver'
+        ORDER BY username ASC
+    ");
+} else {
+    $driverQuery = mysqli_query($conn, "
+        SELECT admin_id, username, qr_token
+        FROM admin
+        WHERE admin_id = $adminId AND role = 'driver'
+        LIMIT 1
+    ");
+}
 ?>
 
 <div class="container-fluid">
@@ -183,7 +192,7 @@ $driverQuery = mysqli_query($conn, "
 
             <?php endif; ?>
 
-            <?php if ($user['role'] === 'admin'): ?>
+            <?php if (in_array($user['role'], ['admin', 'driver'], true)): ?>
                  
                 <!-- Driver QR Codes -->
                 <div class="card border-0 shadow-sm rounded-4 mt-4">
