@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
         mapSearch.value = destination.name;
         searchResults.classList.add('d-none');
 
-        document.getElementById('mapDestinationImage').src = 'admin/' + destination.image.replace(/^\/+/, '');
+        document.getElementById('mapDestinationImage').src = destination.image;
         document.getElementById('mapDestinationImage').alt = destination.name;
 
         document.getElementById('mapDestinationName').textContent = destination.name;
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function () {
         audioPlayer.pause();
         audioPlayer.currentTime = 0;
 
-        audioPlayer.src = 'admin/' + audioPath.replace(/^\/+/, '');
+        audioPlayer.src = audioPath;
 
         audioPlayer.onplay = function () {
             audioStatus.textContent = 'Playing audio narration...';
