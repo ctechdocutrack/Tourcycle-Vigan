@@ -9,6 +9,19 @@ if (($_SESSION['admin_role'] ?? '') !== 'admin') {
 require_once '../../config/dbconn.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    echo '<pre>';
+    echo 'POST DATA:';
+    print_r($_POST);
+
+    echo "\nFILES DATA:";
+    print_r($_FILES);
+
+    echo "\nPHP UPLOAD SETTINGS:";
+    echo "\nupload_max_filesize: " . ini_get('upload_max_filesize');
+    echo "\npost_max_size: " . ini_get('post_max_size');
+    echo '</pre>';
+
+    exit();
 
     $destination_name = mysqli_real_escape_string($conn, trim($_POST['destination_name'] ?? ''));
     $category = mysqli_real_escape_string($conn, trim($_POST['category'] ?? ''));
@@ -193,44 +206,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     } catch (Throwable $error) {
         error_log('Add Destination Error: ' . $error->getMessage());
-
-        if ($conn) {
-            mysqli_rollback($conn);
-        }
-
+        mysqli_rollback($conn);
         // Remove uploaded files if saving fails
         foreach ($uploaded_files as $file) {
             if (file_exists($file)) {
                 unlink($file);
             }
         }
-
-        http_response_code(500);
-
-        echo '<!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Add Destination Error</title>
-            <style>
-                body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 30px; }
-                .error-container { max-width: 700px; margin: 50px auto; background: white; padding: 25px; border-radius: 10px; }
-                h2 { color: #dc3545; }
-                pre { background: #f8d7da; padding: 15px; border-radius: 5px; white-space: pre-wrap; overflow-wrap: break-word; }
-                a { display: inline-block; margin-top: 15px; color: #0d6efd; }
-            </style>
-        </head>
-        <body>
-            <div class="error-container">
-                <h2>Failed to Add Destination</h2>
-                <p>The system encountered an error while saving the destination.</p>
-                <pre>' . htmlspecialchars($error->getMessage(), ENT_QUOTES, 'UTF-8') . '</pre>
-                <a href="../add-destination.php">Back to Add Destination</a>
-            </div>
-        </body>
-        </html>';
-
+        $_SESSION['alert'] = [
+            'type' => 'error',
+            'title' => 'Failed to Add Destination!',
+            'message' => 'An error occurred while saving the destination.'
+        ];
+        header('Location: ../add-destination.php');
         exit;
     }
 }
