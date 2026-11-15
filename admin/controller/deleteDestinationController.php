@@ -7,6 +7,7 @@ if (($_SESSION['admin_role'] ?? '') !== 'admin') {
 }
 
 require_once '../../config/dbconn.php';
+require_once '../includes/github-upload.php';
 
 // Check if form was submitted
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -128,21 +129,31 @@ try {
     exit();
 }
 
-// Delete Uploaded Files
+// Delete Uploaded Files from GitHub
 foreach ($filesToDelete as $filePath) {
 
-    $filePath = (string) $filePath;
+    $filePath = trim((string) $filePath);
 
-    if (
-        strpos($filePath, 'uploads/destinations/') === 0 ||
-        strpos($filePath, 'uploads/audio/') === 0
-    ) {
+    if ($filePath === '') {
+        continue;
+    }
 
-        $file = __DIR__ . '/../' . $filePath;
+    try {
+        if (strpos($filePath, 'https://raw.githubusercontent.com/') === 0) {
+            deleteGitHubFileByUrl($filePath);
+        } elseif (
+            strpos($filePath, 'uploads/destinations/') === 0 ||
+            strpos($filePath, 'uploads/audio/') === 0
+        ) {
+            // Remove legacy local files, if any
+            $file = __DIR__ . '/../' . $filePath;
 
-        if (is_file($file)) {
-            unlink($file);
+            if (is_file($file)) {
+                unlink($file);
+            }
         }
+    } catch (Throwable $file_error) {
+        error_log('Destination file deletion failed: ' . $file_error->getMessage());
     }
 }
 

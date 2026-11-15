@@ -7,6 +7,7 @@ if (($_SESSION['admin_role'] ?? '') !== 'admin') {
 }
 
 require_once '../../config/dbconn.php';
+require_once '../includes/github-upload.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -18,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = mysqli_real_escape_string($conn, $_POST['status'] ?? 'Active');
 
     $uploaded_files = [];
-    $upload_directory = __DIR__ . '/../uploads/destinations/';
-    $audio_upload_directory = __DIR__ . '/../uploads/audio/';
 
     try {
         // Validate destination information
@@ -37,55 +36,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('Please upload the main destination image.');
         }
 
-        // Create upload directory if it does not exist
-        if (!is_dir($upload_directory) && !mkdir($upload_directory, 0755, true)) {
-            throw new Exception('Unable to create image upload directory.');
-        }
-
-        if (!is_dir($audio_upload_directory) && !mkdir($audio_upload_directory, 0755, true)) {
-            throw new Exception('Unable to create audio upload directory.');
-        }
-
         // Upload image function
-        function uploadImage($file, $upload_directory, &$uploaded_files) {
-            if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 20 * 1024 * 1024) {
+        
+        function uploadImage($file, &$uploaded_files) {
+
+            if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > 20 * 1024 * 1024) {
                 throw new Exception('Each image must be valid and must not exceed 20 MB.');
             }
+
             $image_info = getimagesize($file['tmp_name']);
+
             if (!$image_info) {
                 throw new Exception('Invalid image file.');
             }
+
             $allowed_types = [
                 IMAGETYPE_JPEG => 'jpg',
                 IMAGETYPE_PNG => 'png',
                 IMAGETYPE_WEBP => 'webp'
             ];
+
             if (!isset($allowed_types[$image_info[2]])) {
                 throw new Exception('Only JPG, PNG, and WEBP images are allowed.');
             }
 
             $hash = hash_file('sha256', $file['tmp_name']);
 
-            $filename = bin2hex(random_bytes(8)) . '.' . $allowed_types[$image_info[2]];
-            $destination = $upload_directory . $filename;
+            $file['name'] = 'upload.' . $allowed_types[$image_info[2]];
 
-            if (!move_uploaded_file($file['tmp_name'], $destination)) {
-                throw new Exception('Failed to upload image.');
-            }
+            $github_upload = uploadToGitHub($file, 'uploads/destinations');
 
-            $uploaded_files[] = $destination;
+            $uploaded_files[] = [
+                'path' => $github_upload['path'],
+                'sha' => $github_upload['sha']
+            ];
 
             return [
-                'path' => 'uploads/destinations/' . $filename,
+                'path' => $github_upload['url'],
                 'hash' => $hash
             ];
         }
-        
+
         // Upload audio function
-        function uploadAudio($file, $upload_directory, &$uploaded_files) {
+        function uploadAudio($file, &$uploaded_files) {
 
             if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
-                throw new Exception('Please upload the English audio file.');
+                throw new Exception('Please upload the required audio file.');
             }
 
             if ($file['size'] > 20 * 1024 * 1024) {
@@ -100,36 +96,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new Exception('Only MP3 audio files are allowed.');
             }
 
-            $filename = bin2hex(random_bytes(8)) . '.mp3';
-            $destination = $upload_directory . $filename;
+            $file['name'] = 'upload.mp3';
 
-            if (!move_uploaded_file($file['tmp_name'], $destination)) {
-                throw new Exception('Failed to upload audio file.');
-            }
+            $github_upload = uploadToGitHub($file, 'uploads/audio');
 
-            $uploaded_files[] = $destination;
+            $uploaded_files[] = [
+                'path' => $github_upload['path'],
+                'sha' => $github_upload['sha']
+            ];
 
-            return 'uploads/audio/' . $filename;
+            return $github_upload['url'];
         }
 
+        // Start database transaction
+        mysqli_begin_transaction($conn);
+
         // Upload main image
-        $main_image = uploadImage($_FILES['image'], $upload_directory, $uploaded_files);
+        $main_image = uploadImage($_FILES['image'], $uploaded_files);
         // Upload English audio
-        $audio_en_path = uploadAudio($_FILES['audio_en'] ?? null, $audio_upload_directory, $uploaded_files);
+        $audio_en_path = uploadAudio($_FILES['audio_en'] ?? null, $uploaded_files);
         $audio_en_path = mysqli_real_escape_string($conn, $audio_en_path);
         // Upload Tagalog audio
-        $audio_tl_path = uploadAudio($_FILES['audio_tl'] ?? null, $audio_upload_directory, $uploaded_files);
+        $audio_tl_path = uploadAudio($_FILES['audio_tl'] ?? null, $uploaded_files);
         $audio_tl_path = mysqli_real_escape_string($conn, $audio_tl_path);
         // Upload Ilokano audio
-        $audio_ilo_path = uploadAudio($_FILES['audio_ilo'] ?? null, $audio_upload_directory, $uploaded_files);
+        $audio_ilo_path = uploadAudio($_FILES['audio_ilo'] ?? null, $uploaded_files);
         $audio_ilo_path = mysqli_real_escape_string($conn, $audio_ilo_path);
         
         $image_hashes = [$main_image['hash']];
 
         $main_image_path = mysqli_real_escape_string($conn, $main_image['path']);
-
-        // Start database transaction
-        mysqli_begin_transaction($conn);
 
         // Insert destination
         $sql = "INSERT INTO destinations 
@@ -166,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'error' => $files['error'][$i],
                     'size' => $files['size'][$i]
                 ];
-                $additional_image = uploadImage($additional_file, $upload_directory, $uploaded_files);
+                $additional_image = uploadImage($additional_file, $uploaded_files);
                 if (in_array($additional_image['hash'], $image_hashes, true)) {
                     throw new Exception('Duplicate image detected. Please select different images.');
                 }
@@ -196,8 +192,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_rollback($conn);
         // Remove uploaded files if saving fails
         foreach ($uploaded_files as $file) {
-            if (file_exists($file)) {
-                unlink($file);
+            try {
+                deleteFromGitHub($file['path'], $file['sha']);
+            } catch (Exception $cleanup_error) {
+                error_log('GitHub cleanup failed: ' . $cleanup_error->getMessage());
             }
         }
         $_SESSION['alert'] = [

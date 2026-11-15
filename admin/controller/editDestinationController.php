@@ -7,6 +7,7 @@ if (($_SESSION['admin_role'] ?? '') !== 'admin') {
 }
 
 require_once '../../config/dbconn.php';
+require_once '../includes/github-upload.php';
 
 // Check if form was submitted
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -94,36 +95,41 @@ $longitude = (float) $longitude;
 $status = mysqli_real_escape_string($conn, $status);
 
 // Upload image function
-function uploadImage($file, $upload_directory, &$uploaded_files) {
-    if ($file['error'] !== UPLOAD_ERR_OK || $file['size'] > 20 * 1024 * 1024) {
+function uploadImage($file, &$uploaded_files) {
+
+    if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK || $file['size'] > 20 * 1024 * 1024) {
         throw new Exception('Each image must be valid and must not exceed 20 MB.');
     }
+
     $image_info = getimagesize($file['tmp_name']);
+
     if (!$image_info) {
         throw new Exception('Invalid image file.');
     }
+
     $allowed_types = [
         IMAGETYPE_JPEG => 'jpg',
         IMAGETYPE_PNG => 'png',
         IMAGETYPE_WEBP => 'webp'
     ];
+
     if (!isset($allowed_types[$image_info[2]])) {
         throw new Exception('Only JPG, PNG, and WEBP images are allowed.');
     }
 
     $hash = hash_file('sha256', $file['tmp_name']);
 
-    $filename = bin2hex(random_bytes(8)) . '.' . $allowed_types[$image_info[2]];
-    $destination = $upload_directory . $filename;
+    $file['name'] = 'upload.' . $allowed_types[$image_info[2]];
 
-    if (!move_uploaded_file($file['tmp_name'], $destination)) {
-        throw new Exception('Failed to upload image.');
-    }
+    $github_upload = uploadToGitHub($file, 'uploads/destinations'); 
 
-    $uploaded_files[] = $destination;
+    $uploaded_files[] = [
+        'path' => $github_upload['path'],
+        'sha' => $github_upload['sha']
+    ];
 
     return [
-        'path' => 'uploads/destinations/' . $filename,
+        'path' => $github_upload['url'],
         'hash' => $hash
     ];
 }
@@ -132,19 +138,7 @@ $transactionStarted = false;
 
 try {
 
-    // Upload Directories
     $uploaded_files = [];
-    $upload_directory = '../uploads/destinations/';
-    $audio_upload_directory = '../uploads/audio/';
-
-    // Create Upload Directories if Needed
-    if (!is_dir($upload_directory) && !mkdir($upload_directory, 0755, true)) {
-        throw new Exception('Unable to create image upload directory.');
-    }
-
-    if (!is_dir($audio_upload_directory) && !mkdir($audio_upload_directory, 0755, true)) {
-        throw new Exception('Unable to create audio upload directory.');
-    }
 
     // Store Old File Paths
     $oldMainImagePath = $destination['image'];
@@ -157,7 +151,7 @@ try {
     // Upload New Main Image if Selected
     if (isset($_FILES['image']) && $_FILES['image']['error'] !== UPLOAD_ERR_NO_FILE) {
 
-        $newImage = uploadImage($_FILES['image'], $upload_directory, $uploaded_files);
+        $newImage = uploadImage($_FILES['image'], $uploaded_files);
 
         $mainImagePath = $newImage['path'];
     }
@@ -165,7 +159,7 @@ try {
     $mainImagePath = mysqli_real_escape_string($conn, $mainImagePath);
 
     // Upload audio function
-    function uploadAudio($file, $upload_directory, &$uploaded_files) {
+    function uploadAudio($file, &$uploaded_files) {
 
         if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
             throw new Exception('Please upload the English audio file.');
@@ -183,16 +177,16 @@ try {
             throw new Exception('Only MP3 audio files are allowed.');
         }
 
-        $filename = bin2hex(random_bytes(8)) . '.mp3';
-        $destination = $upload_directory . $filename;
+        $file['name'] = 'upload.mp3';
 
-        if (!move_uploaded_file($file['tmp_name'], $destination)) {
-            throw new Exception('Failed to upload audio file.');
-        }
+        $github_upload = uploadToGitHub($file, 'uploads/audio');
 
-        $uploaded_files[] = $destination;
+        $uploaded_files[] = [
+            'path' => $github_upload['path'],
+            'sha' => $github_upload['sha']
+        ];
 
-        return 'uploads/audio/' . $filename;
+        return $github_upload['url'];
     }
 
     // Keep Existing Audio Files
@@ -202,17 +196,17 @@ try {
 
     // Upload New English Audio if Selected
     if (isset($_FILES['audio_en']) && $_FILES['audio_en']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $audioEnPath = uploadAudio($_FILES['audio_en'], $audio_upload_directory, $uploaded_files);
+        $audioEnPath = uploadAudio($_FILES['audio_en'], $uploaded_files);
     }
 
     // Upload New Tagalog Audio if Selected
     if (isset($_FILES['audio_tl']) && $_FILES['audio_tl']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $audioTlPath = uploadAudio($_FILES['audio_tl'], $audio_upload_directory, $uploaded_files);
+        $audioTlPath = uploadAudio($_FILES['audio_tl'], $uploaded_files);
     }
 
     // Upload New Ilokano Audio if Selected
     if (isset($_FILES['audio_ilo']) && $_FILES['audio_ilo']['error'] !== UPLOAD_ERR_NO_FILE) {
-        $audioIloPath = uploadAudio($_FILES['audio_ilo'], $audio_upload_directory, $uploaded_files);
+        $audioIloPath = uploadAudio($_FILES['audio_ilo'], $uploaded_files);
     }
 
     // Escape Audio Paths
@@ -227,29 +221,13 @@ try {
 
     $transactionStarted = true;
 
-    // Delete Replaced Old Files
+    // Store Replaced Old Files for Deletion After Successful Update
     $oldFiles = [
-        [$oldMainImagePath, $mainImagePath, 'uploads/destinations/'],
-        [$oldAudioEnPath, $audioEnPath, 'uploads/audio/'],
-        [$oldAudioTlPath, $audioTlPath, 'uploads/audio/'],
-        [$oldAudioIloPath, $audioIloPath, 'uploads/audio/']
+        [$oldMainImagePath, $mainImagePath],
+        [$oldAudioEnPath, $audioEnPath],
+        [$oldAudioTlPath, $audioTlPath],
+        [$oldAudioIloPath, $audioIloPath]
     ];
-
-    foreach ($oldFiles as $file) {
-
-        $oldPath = (string) $file[0];
-        $newPath = (string) $file[1];
-        $folder = $file[2];
-
-        if ($oldPath !== $newPath && strpos($oldPath, $folder) === 0) {
-
-            $oldFile = __DIR__ . '/../' . $oldPath;
-
-            if (is_file($oldFile)) {
-                unlink($oldFile);
-            }
-        }
-    }
 
     // Update Destination
     $sql = "UPDATE destinations SET
@@ -287,7 +265,7 @@ try {
                 'size' => $files['size'][$i]
             ];
 
-            $additionalImage = uploadImage($additionalFile, $upload_directory, $uploaded_files);
+            $additionalImage = uploadImage($additionalFile, $uploaded_files);
 
             $imagePath = mysqli_real_escape_string($conn, $additionalImage['path']);
 
@@ -306,6 +284,39 @@ try {
     }
 
     $transactionStarted = false;
+
+    // Delete Replaced Old Files from GitHub or Local Storage
+    foreach ($oldFiles as $file) {
+
+        $oldPath = trim((string) $file[0]);
+        $newPath = trim((string) $file[1]);
+
+        if ($oldPath === '' || $oldPath === $newPath) {
+            continue;
+        }
+
+        try {
+
+            if (strpos($oldPath, 'https://raw.githubusercontent.com/') === 0) {
+
+                deleteGitHubFileByUrl($oldPath);
+
+            } elseif (
+                strpos($oldPath, 'uploads/destinations/') === 0 ||
+                strpos($oldPath, 'uploads/audio/') === 0
+            ) {
+
+                $oldFile = __DIR__ . '/../' . $oldPath;
+
+                if (is_file($oldFile)) {
+                    unlink($oldFile);
+                }
+            }
+
+        } catch (Throwable $file_error) {
+            error_log('Old destination file deletion failed: ' . $file_error->getMessage());
+        }
+    }
 
     // Refresh Destination Session Cache
     $updatedQuery = "SELECT * FROM destinations WHERE destinations_id = $destinationId LIMIT 1";
@@ -404,10 +415,13 @@ try {
         mysqli_rollback($conn);
     }
 
-    // Remove Newly Uploaded Files if Update Fails
+    // Remove Newly Uploaded Files from GitHub if Update Fails
     foreach ($uploaded_files as $file) {
-        if (file_exists($file)) {
-            unlink($file);
+
+        try {
+            deleteFromGitHub($file['path'], $file['sha']);
+        } catch (Throwable $cleanup_error) {
+            error_log('GitHub cleanup failed: ' . $cleanup_error->getMessage());
         }
     }
 
