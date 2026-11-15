@@ -13,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function () {
         touchRotate: false
     }).setView([17.5747, 120.3869], 15);
 
+    window.touristMap = touristMap;
+
     L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://stadiamaps.com/attribution/">Stadia Maps</a> &copy; OpenMapTiles &copy; OpenStreetMap',
         maxZoom: 20

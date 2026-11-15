@@ -1,4 +1,3 @@
-
 // ==========================================
 // SIDEBAR TOGGLE
 // ==========================================
@@ -44,10 +43,10 @@ function updateSidebar() {
     }
 
     setTimeout(() => {
-        if (typeof touristMap !== "undefined") {
-            touristMap.invalidateSize();
-        }
-    }, 350);
+            if (window.touristMap && typeof window.touristMap.invalidateSize === "function") {
+                window.touristMap.invalidateSize();
+            }
+        }, 350);
 }
 
 // Initial Sidebar State
@@ -67,8 +66,10 @@ window.addEventListener("resize", updateSidebar);
 // MOBILE LOCATION BUTTON
 // ==========================================
 
-document.getElementById("mobileLocateMe").addEventListener("click", function () {
+const mobileLocateMe = document.getElementById("mobileLocateMe");
 
-    document.getElementById("locateMeMap").click();
-
-});
+if (mobileLocateMe) {
+    mobileLocateMe.addEventListener("click", function () {
+        document.getElementById("locateMe").click();
+    });
+}

@@ -289,7 +289,7 @@ document.querySelectorAll('.driver-qr-code').forEach(function (element) {
     }
 
     const driverUrl = window.location.origin +
-        '/Tourcycle Vigan?driver=' + encodeURIComponent(token);
+    '/?driver=' + encodeURIComponent(token);
 
     new QRCode(element, {
         text: driverUrl,
