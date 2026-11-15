@@ -1,5 +1,44 @@
-<?php include 'assets/includes/header.php'; ?>
-<?php include 'assets/includes/sidebar.php'; ?>
+<?php
+include 'config/dbconn.php';
+
+$deviceToken = $_COOKIE['tour_device_token'] ?? '';
+
+if (!$deviceToken) {
+    header("Location: index.php");
+    exit();
+}
+
+$tokenHash = hash('sha256', $deviceToken);
+$tokenHash = mysqli_real_escape_string($conn, $tokenHash);
+
+$result = mysqli_query($conn, "
+    SELECT status
+    FROM tour_sessions
+    WHERE device_token_hash = '$tokenHash'
+    LIMIT 1
+");
+
+if (!$result || mysqli_num_rows($result) === 0) {
+    header("Location: index.php");
+    exit();
+}
+
+$session = mysqli_fetch_assoc($result);
+
+if ($session['status'] !== 'Active') {
+    header("Location: index.php");
+    exit();
+}
+
+mysqli_query($conn, "
+    UPDATE tour_sessions
+    SET last_activity_at = NOW()
+    WHERE device_token_hash = '$tokenHash'
+");
+
+include 'assets/includes/header.php';
+include 'assets/includes/sidebar.php';
+?>
 
 <!-- Leaflet CSS -->
 <link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css">
@@ -356,6 +395,25 @@
     </div>
 
 </section>
+<script>
+    // Monitor visitor access every 3 seconds
+    setInterval(async function () {
+        try {
+            const response = await fetch('api/check-access.php', {
+                cache: 'no-store'
+            });
+
+            const data = await response.json();
+
+            if (data.status !== 'Active') {
+                window.location.href = 'index.php?access=inactive';
+            }
+
+        } catch (error) {
+            console.log('Access monitoring failed:', error);
+        }
+    }, 3000);
+</script>
 
 <!-- Leaflet JS -->
 <script src="node_modules/leaflet/dist/leaflet.js"></script>

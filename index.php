@@ -1,3 +1,109 @@
+<?php
+include 'config/dbconn.php';
+
+// Generate a secure device token
+$deviceToken = $_COOKIE['tour_device_token'] ?? '';
+$tokenHash = $deviceToken ? hash('sha256', $deviceToken) : '';
+
+$tourSession = null;
+
+// Check existing visitor session
+if ($tokenHash) {
+
+    $tokenHash = mysqli_real_escape_string($conn, $tokenHash);
+
+    $result = mysqli_query($conn, "
+        SELECT * FROM tour_sessions
+        WHERE device_token_hash = '$tokenHash'
+        LIMIT 1
+    ");
+
+    if ($result) {
+        $tourSession = mysqli_fetch_assoc($result);
+    }
+
+}
+
+// Create a new session if none exists or previous session has ended/expired
+if (
+    !$tourSession ||
+    in_array($tourSession['status'], ['Ended', 'Expired'], true)
+) {
+
+    $deviceToken = bin2hex(random_bytes(32));
+    $tokenHash = hash('sha256', $deviceToken);
+
+    // Generate unique Tour ID and Access Code
+    $tourId = 'TV-' . strtoupper(bin2hex(random_bytes(4)));
+    $accessCode = strtoupper(bin2hex(random_bytes(4)));
+
+    // Detect device type
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+    $deviceType = preg_match('/mobile|android|iphone|ipad/i', $userAgent)
+        ? 'Mobile'
+        : 'Desktop';
+
+    // Detect browser
+    $browser = 'Other';
+
+    if (stripos($userAgent, 'Edg') !== false) {
+        $browser = 'Microsoft Edge';
+    } elseif (stripos($userAgent, 'Chrome') !== false) {
+        $browser = 'Google Chrome';
+    } elseif (stripos($userAgent, 'Firefox') !== false) {
+        $browser = 'Mozilla Firefox';
+    } elseif (stripos($userAgent, 'Safari') !== false) {
+        $browser = 'Safari';
+    }
+
+    $deviceType = mysqli_real_escape_string($conn, $deviceType);
+    $browser = mysqli_real_escape_string($conn, $browser);
+    $tourId = mysqli_real_escape_string($conn, $tourId);
+    $accessCode = mysqli_real_escape_string($conn, $accessCode);
+
+    $insert = mysqli_query($conn, "
+        INSERT INTO tour_sessions (
+            tour_id,
+            access_code,
+            device_token_hash,
+            device_type,
+            browser,
+            last_activity_at
+        ) VALUES (
+            '$tourId',
+            '$accessCode',
+            '$tokenHash',
+            '$deviceType',
+            '$browser',
+            NOW()
+        )
+    ");
+
+    if (!$insert) {
+        die('Unable to create tour session: ' . mysqli_error($conn));
+    }
+
+    // Save device token in a secure browser cookie
+    setcookie('tour_device_token', $deviceToken, [
+        'expires' => time() + (365 * 24 * 60 * 60),
+        'path' => '/',
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'httponly' => true,
+        'samesite' => 'Lax'
+    ]);
+
+    $result = mysqli_query($conn, "
+        SELECT * FROM tour_sessions
+        WHERE device_token_hash = '$tokenHash'
+        LIMIT 1
+    ");
+
+    $tourSession = mysqli_fetch_assoc($result);
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,6 +200,45 @@
         </div>
     </main>
 
+        <!-- Access Pending Screen -->
+    <main id="pendingScreen" class="vh-100 bg-dark text-white d-none">
+        <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center p-4">
+
+            <i class="bi bi-hourglass-split text-warning display-1 mb-4"></i>
+
+            <h2 id="accessStatusTitle" class="fw-bold mb-3">
+                Waiting for Approval
+            </h2>
+
+            <p id="accessStatusMessage" class="text-white-50 mb-4">
+                Please present your Tour ID to the administrator
+                and wait for your access to be activated.
+            </p>
+
+            <div class="bg-white text-dark rounded-4 p-4 w-100" style="max-width: 350px;">
+
+                <small class="text-muted fw-semibold">YOUR TOUR ID</small>
+
+                <h2 class="fw-bold text-primary my-3">
+                    <?= htmlspecialchars($tourSession['tour_id']) ?>
+                </h2>
+
+                <small class="text-muted">
+                    Show this ID to the administrator.
+                </small>
+
+            </div>
+
+            <div class="mt-4">
+                <div class="spinner-border text-warning" role="status"></div>
+                <p id="accessStatusDescription" class="text-white-50 mt-2 mb-0">
+                    Waiting for admin activation...
+                </p>
+            </div>
+
+        </div>
+    </main>
+
 
     <script>
         const startTourSlider = document.getElementById('startTourSlider');
@@ -165,6 +310,84 @@
             };
 
         }
+       
+        // Access Status Monitoring
+        let accessCheckInterval = null;
+
+        const pendingScreen = document.getElementById('pendingScreen');
+        const accessStatusTitle = document.getElementById('accessStatusTitle');
+        const accessStatusMessage = document.getElementById('accessStatusMessage');
+        const accessStatusDescription = document.getElementById('accessStatusDescription');
+        const pendingSpinner = pendingScreen.querySelector('.spinner-border');
+
+        function showAccessScreen(status) {
+
+            welcomeScreen.classList.add('d-none');
+            document.getElementById('languageScreen').classList.add('d-none');
+            pendingScreen.classList.remove('d-none');
+
+            pendingSpinner.classList.remove('d-none');
+
+            if (status === 'Pending') {
+                accessStatusTitle.textContent = 'Waiting for Approval';
+                accessStatusMessage.textContent = 'Please present your Tour ID to the administrator and wait for your access to be activated.';
+                accessStatusDescription.textContent = 'Waiting for admin activation...';
+
+            } else if (status === 'Inactive') {
+                accessStatusTitle.textContent = 'Access Temporarily Deactivated';
+                accessStatusMessage.textContent = 'Your access has been temporarily deactivated by the administrator.';
+                accessStatusDescription.textContent = 'Waiting for access reactivation...';
+
+            } else if (status === 'Expired' || status === 'Ended') {
+                accessStatusTitle.textContent = 'Access No Longer Available';
+                accessStatusMessage.textContent = 'Your tour access is no longer available. Please contact the administrator.';
+                accessStatusDescription.textContent = 'This access session has ended.';
+
+                pendingSpinner.classList.add('d-none');
+            }
+        }
+
+        async function checkVisitorAccess() {
+
+            try {
+
+                const response = await fetch('api/check-access.php', {
+                    cache: 'no-store'
+                });
+
+                const data = await response.json();
+
+                if (data.status === 'Active') {
+
+                    clearInterval(accessCheckInterval);
+                    window.location.href = 'maps.php';
+
+                } else if (['Pending', 'Inactive', 'Expired', 'Ended'].includes(data.status)) {
+
+                    showAccessScreen(data.status);
+
+                    if (data.status === 'Expired' || data.status === 'Ended') {
+                        clearInterval(accessCheckInterval);
+                    }
+
+                }
+
+            } catch (error) {
+                console.log('Access checking failed:', error);
+            }
+        }
+
+        function startAccessMonitoring() {
+
+            if (accessCheckInterval) {
+                clearInterval(accessCheckInterval);
+            }
+
+            checkVisitorAccess();
+
+            accessCheckInterval = setInterval(checkVisitorAccess, 3000);
+        }
+
         // Language Selection
         document.querySelectorAll('.language-option').forEach(button => {
 
@@ -174,11 +397,19 @@
 
                 sessionStorage.setItem('selectedLanguage', selectedLanguage);
 
-                window.location.href = 'maps.php';
+                showAccessScreen('Pending');
+                startAccessMonitoring();
 
             });
 
         });
+
+        // Restore visitor access screen after deactivation or page refresh
+        const selectedLanguage = sessionStorage.getItem('selectedLanguage');
+
+        if (selectedLanguage) {
+            startAccessMonitoring();
+        }
     </script>
 
 </body>

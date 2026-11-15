@@ -1,5 +1,8 @@
 
-<?php include 'includes/admin-header.php'; ?>
+<?php 
+include 'includes/admin-auth.php';
+include 'includes/admin-header.php'; 
+?>
 <?php include 'includes/flash-alert.php'; ?>
 <div class="container-fluid">
     <div class="row">

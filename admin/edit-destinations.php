@@ -28,7 +28,10 @@ if (!$destination) {
 $additionalImages = $_SESSION['additional_images'][$destinationId] ?? [];
 ?>
 
-<?php include 'includes/admin-header.php'; ?>
+<?php 
+include 'includes/admin-auth.php';
+include 'includes/admin-header.php'; 
+?>
 
 <?php include 'includes/admin-header.php'; ?>
 <?php include 'includes/flash-alert.php'; ?>

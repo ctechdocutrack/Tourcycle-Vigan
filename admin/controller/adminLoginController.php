@@ -15,9 +15,8 @@ if (isset($_POST['adminLogin'])) {
 
         $admin = mysqli_fetch_assoc($result);
 
-        $_SESSION['admin_id'] = $admin['id'];
+        $_SESSION['admin_id'] = $admin['admin_id'];
         $_SESSION['admin_username'] = $admin['username'];
-        $_SESSION['admin_role'] = $admin['role'];
 
         // Fetch all destinations
         $destinationQuery = "SELECT * FROM destinations";

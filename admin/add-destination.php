@@ -1,4 +1,8 @@
-<?php include 'includes/admin-header.php'; ?>
+<?php 
+include 'includes/admin-auth.php';
+include 'includes/admin-header.php'; 
+?>
+
 <?php include 'includes/flash-alert.php'; ?>
 <link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css">
 

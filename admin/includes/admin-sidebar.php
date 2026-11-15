@@ -26,6 +26,11 @@
             Destinations
         </a>
 
+        <a href="access-management.php" class="nav-link text-dark">
+            <i class="bi bi-shield-lock me-2"></i>
+            Access Management
+        </a>
+
         <hr>
 
         <small class="text-muted fw-semibold">SYSTEM</small>
@@ -103,6 +108,11 @@
 
             <a href="destinations.php" class="nav-link text-dark">
                 <i class="bi bi-geo-alt me-2"></i> Destinations
+            </a>
+
+            <a href="access-management.php" class="nav-link text-dark">
+                <i class="bi bi-shield-lock me-2"></i>
+                Access Management
             </a>
 
             <hr>
