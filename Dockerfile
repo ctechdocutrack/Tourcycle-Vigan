@@ -3,8 +3,9 @@ FROM php:8.3-apache
 
 WORKDIR /var/www/html
 
-COPY . /var/www/html/
+RUN docker-php-ext-install mysqli \
+    && a2enmod rewrite
 
-RUN a2enmod rewrite
+COPY . /var/www/html/
 
 EXPOSE 80
