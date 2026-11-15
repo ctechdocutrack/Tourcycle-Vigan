@@ -8,9 +8,9 @@ RUN docker-php-ext-install mysqli \
 COPY . /var/www/html/
 
 RUN mkdir -p \
-    /var/www/html/uploads/destinations \
-    /var/www/html/uploads/audio \
-    && chown -R www-data:www-data /var/www/html/uploads \
-    && chmod -R 775 /var/www/html/uploads
+    /var/www/html/admin/uploads/destinations \
+    /var/www/html/admin/uploads/audio \
+    && chown -R www-data:www-data /var/www/html/admin/uploads \
+    && chmod -R 775 /var/www/html/admin/uploads
 
 EXPOSE 80
