@@ -13,6 +13,7 @@ RUN mkdir -p \
     /var/www/html/admin/uploads/destinations \
     /var/www/html/admin/uploads/audio \
     && chown -R www-data:www-data /var/www/html/admin/uploads \
-    && chmod -R 775 /var/www/html/admin/uploads
+    && chmod -R 775 /var/www/html/admin/uploads \
+    && chown -R www-data:www-data /var/www/html/admin/controller
 
 EXPOSE 80

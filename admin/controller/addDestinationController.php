@@ -9,19 +9,6 @@ if (($_SESSION['admin_role'] ?? '') !== 'admin') {
 require_once '../../config/dbconn.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    echo '<pre>';
-    echo 'POST DATA:';
-    print_r($_POST);
-
-    echo "\nFILES DATA:";
-    print_r($_FILES);
-
-    echo "\nPHP UPLOAD SETTINGS:";
-    echo "\nupload_max_filesize: " . ini_get('upload_max_filesize');
-    echo "\npost_max_size: " . ini_get('post_max_size');
-    echo '</pre>';
-
-    exit();
 
     $destination_name = mysqli_real_escape_string($conn, trim($_POST['destination_name'] ?? ''));
     $category = mysqli_real_escape_string($conn, trim($_POST['category'] ?? ''));
@@ -31,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $status = mysqli_real_escape_string($conn, $_POST['status'] ?? 'Active');
 
     $uploaded_files = [];
-    $upload_directory = '../uploads/destinations/';
-    $audio_upload_directory = '../uploads/audio/';
+    $upload_directory = __DIR__ . '/../uploads/destinations/';
+    $audio_upload_directory = __DIR__ . '/../uploads/audio/';
 
     try {
         // Validate destination information
