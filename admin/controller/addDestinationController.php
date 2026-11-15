@@ -192,6 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: ../destinations.php');
         exit;
     } catch (Throwable $error) {
+        error_log('Add Destination Error: ' . $error->getMessage());
         mysqli_rollback($conn);
         // Remove uploaded files if saving fails
         foreach ($uploaded_files as $file) {
