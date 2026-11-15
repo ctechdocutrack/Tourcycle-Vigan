@@ -1,4 +1,3 @@
-
 <?php 
 include 'includes/admin-auth.php';
 include 'includes/admin-only.php';
