@@ -1,17 +1,4 @@
 <?php
-// $host = "localhost";
-// $dbname = "tourcycle-vigan";
-// $username = "root";
-// $password = "";
-
-// $conn = mysqli_connect($host, $username, $password, $dbname);
-
-// if (!$conn) {
-//     die("Connection failed: " . mysqli_connect_error());
-// }
-
-// mysqli_set_charset($conn, "utf8mb4");
-
 $host = "gateway01.ap-northeast-1.prod.aws.tidbcloud.com";
 $dbname = "tourcycle_vigan";
 $username = "2pSkLTKVKsBo7db.root";
