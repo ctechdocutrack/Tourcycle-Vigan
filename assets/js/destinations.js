@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             card.innerHTML = `
                 <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-                    <img src="admin/${destination.image}"
+                    <img src="${destination.image}"
                         class="card-img-top object-fit-cover"
                         height="190" alt="${destination.name}">
 
