@@ -19,6 +19,18 @@ if (
 $tourSessionsId = (int) ($_POST['tour_sessions_id'] ?? 0);
 $action = $_POST['action'] ?? '';
 
+$adminRole = $_SESSION['admin_role'] ?? '';
+$adminId = (int) $_SESSION['admin_id'];
+
+if (!in_array($adminRole, ['admin', 'driver'], true)) {
+    header("Location: ../access-management.php");
+    exit();
+}
+
+$ownershipCondition = $adminRole === 'driver'
+    ? " AND admin_id = $adminId"
+    : "";
+
 if ($tourSessionsId <= 0 || !in_array($action, ['activate', 'expire', 'deactivate', 'reactivate', 'end', 'restore'], true)) {
     header("Location: ../access-management.php");
     exit();
@@ -47,6 +59,7 @@ $check = mysqli_query($conn, "
     SELECT status
     FROM tour_sessions
     WHERE tour_sessions_id = $tourSessionsId
+    $ownershipCondition
     LIMIT 1
 ");
 
@@ -74,6 +87,7 @@ if ($check && mysqli_num_rows($check) > 0) {
                 $timestampUpdate
             WHERE tour_sessions_id = $tourSessionsId
             AND status = '$requiredStatus'
+            $ownershipCondition
         ");
 
         if ($update && mysqli_affected_rows($conn) === 1) {

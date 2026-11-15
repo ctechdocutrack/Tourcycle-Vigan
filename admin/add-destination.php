@@ -1,5 +1,6 @@
 <?php 
 include 'includes/admin-auth.php';
+include 'includes/admin-only.php';
 include 'includes/admin-header.php'; 
 ?>
 

@@ -15,8 +15,11 @@ if (isset($_POST['adminLogin'])) {
 
         $admin = mysqli_fetch_assoc($result);
 
+        session_regenerate_id(true);
+
         $_SESSION['admin_id'] = $admin['admin_id'];
         $_SESSION['admin_username'] = $admin['username'];
+        $_SESSION['admin_role'] = $admin['role'];
 
         // Fetch all destinations
         $destinationQuery = "SELECT * FROM destinations";
@@ -103,7 +106,11 @@ if (isset($_POST['adminLogin'])) {
             'title' => 'Logged In Success!',
             'message' => 'Admin Successfully Loged In.'
         ];
-        header("Location: ../dashboard.php");
+        if ($admin['role'] === 'admin') {
+            header("Location: ../dashboard.php");
+        } else {
+            header("Location: ../access-management.php");
+        }
         exit();
 
     } else {

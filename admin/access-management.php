@@ -11,34 +11,45 @@ if (empty($_SESSION['csrf_token'])) {
 $csrfToken = $_SESSION['csrf_token'];
 $tourIdSearch = '';
 
+$adminRole = $_SESSION['admin_role'];
+$adminId = (int) $_SESSION['admin_id'];
+
+$sessionFilter = $adminRole === 'driver'
+    ? " AND admin_id = $adminId"
+    : "";
+
 $pendingSessions = mysqli_query($conn, "
     SELECT *
     FROM tour_sessions
-    WHERE status = 'Pending'
+    WHERE status = 'Pending' $sessionFilter
     ORDER BY created_at DESC
 ");
+
 $activeSessions = mysqli_query($conn, "
     SELECT *
     FROM tour_sessions
-    WHERE status = 'Active'
+    WHERE status = 'Active' $sessionFilter
     ORDER BY activated_at DESC
 ");
+
 $inactiveSessions = mysqli_query($conn, "
     SELECT *
     FROM tour_sessions
-    WHERE status = 'Inactive'
+    WHERE status = 'Inactive' $sessionFilter
     ORDER BY updated_at DESC
 ");
+
 $endedSessions = mysqli_query($conn, "
     SELECT *
     FROM tour_sessions
-    WHERE status = 'Ended'
+    WHERE status = 'Ended' $sessionFilter
     ORDER BY ended_at DESC
 ");
+
 $expiredSessions = mysqli_query($conn, "
     SELECT *
     FROM tour_sessions
-    WHERE status = 'Expired'
+    WHERE status = 'Expired' $sessionFilter
     ORDER BY expired_at DESC
 ");
 ?>

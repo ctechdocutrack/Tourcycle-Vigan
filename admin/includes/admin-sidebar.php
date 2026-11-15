@@ -14,17 +14,19 @@
 
     <div class="nav nav-pills flex-column gap-2">
 
-        <a href="dashboard.php"
-            class="nav-link active">
-            <i class="bi bi-grid me-2"></i>
-            Dashboard
-        </a>
+        <?php if ($_SESSION['admin_role'] === 'admin'): ?>
+            <a href="dashboard.php" class="nav-link active">
+                <i class="bi bi-grid me-2"></i>
+                Dashboard
+            </a>
+        <?php endif; ?>
 
-        <a href="destinations.php"
-            class="nav-link text-dark">
-            <i class="bi bi-geo-alt me-2"></i>
-            Destinations
-        </a>
+        <?php if ($_SESSION['admin_role'] === 'admin'): ?>
+            <a href="destinations.php" class="nav-link text-dark">
+                <i class="bi bi-geo-alt me-2"></i>
+                Destinations
+            </a>
+        <?php endif; ?>
 
         <a href="access-management.php" class="nav-link text-dark">
             <i class="bi bi-shield-lock me-2"></i>
@@ -35,10 +37,17 @@
 
         <small class="text-muted fw-semibold">SYSTEM</small>
 
-        <a href="settings.php"
-            class="nav-link text-dark">
-            <i class="bi bi-gear me-2"></i>
-            Settings
+        <?php if ($_SESSION['admin_role'] === 'admin'): ?>
+            <a href="settings.php"
+                class="nav-link text-dark">
+                <i class="bi bi-gear me-2"></i>
+                Settings
+            </a>
+        <?php endif; ?>
+
+        <a href="admin-profile.php" class="nav-link text-dark">
+            <i class="bi bi-person-circle me-2"></i>
+            My Profile
         </a>
 
         <a href="../index.php"
@@ -52,8 +61,12 @@
         <div class="d-flex align-items-center gap-2">
             <i class="bi bi-person-circle fs-3 text-success"></i>
             <div class="flex-grow-1">
-                <div class="fw-semibold">Administrator</div>
-                <small class="text-muted">Admin Account</small>
+                <div class="fw-semibold">
+                    <?= htmlspecialchars($_SESSION['admin_username']) ?>
+                </div>
+                <small class="text-muted">
+                    <?= htmlspecialchars(ucfirst($_SESSION['admin_role'])) ?> Account
+                </small>
             </div>
             <a href="controller/logoutController.php" class="text-danger" title="Logout">
                 <i class="bi bi-box-arrow-right fs-5"></i>
@@ -102,13 +115,17 @@
 
         <div class="nav nav-pills flex-column gap-2">
 
-            <a href="dashboard.php" class="nav-link active">
-                <i class="bi bi-grid me-2"></i> Dashboard
-            </a>
+            <?php if ($_SESSION['admin_role'] === 'admin'): ?>
+                <a href="dashboard.php" class="nav-link active">
+                    <i class="bi bi-grid me-2"></i> Dashboard
+                </a>
+            <?php endif; ?>
 
-            <a href="destinations.php" class="nav-link text-dark">
-                <i class="bi bi-geo-alt me-2"></i> Destinations
-            </a>
+            <?php if ($_SESSION['admin_role'] === 'admin'): ?>
+                <a href="destinations.php" class="nav-link text-dark">
+                    <i class="bi bi-geo-alt me-2"></i> Destinations
+                </a>
+            <?php endif; ?>
 
             <a href="access-management.php" class="nav-link text-dark">
                 <i class="bi bi-shield-lock me-2"></i>
@@ -119,8 +136,14 @@
 
             <small class="text-muted fw-semibold">SYSTEM</small>
 
-            <a href="settings.php" class="nav-link text-dark">
-                <i class="bi bi-gear me-2"></i> Settings
+            <?php if ($_SESSION['admin_role'] === 'admin'): ?>
+                <a href="settings.php" class="nav-link text-dark">
+                    <i class="bi bi-gear me-2"></i> Settings
+                </a>
+             <?php endif; ?>
+
+            <a href="admin-profile.php" class="nav-link text-dark">
+                <i class="bi bi-person-circle me-2"></i> My Profile
             </a>
 
             <a href="../index.php" class="nav-link text-dark">
@@ -133,8 +156,12 @@
             <div class="d-flex align-items-center gap-2">
                 <i class="bi bi-person-circle fs-3 text-success"></i>
                 <div class="flex-grow-1">
-                    <div class="fw-semibold">Administrator</div>
-                    <small class="text-muted">Admin Account</small>
+                    <div class="fw-semibold">
+                        <?= htmlspecialchars($_SESSION['admin_username']) ?>
+                    </div>
+                    <small class="text-muted">
+                        <?= htmlspecialchars(ucfirst($_SESSION['admin_role'])) ?> Account
+                    </small>
                 </div>
                 <a href="controller/logoutController.php" class="text-danger" title="Logout">
                     <i class="bi bi-box-arrow-right fs-5"></i>

@@ -1,5 +1,25 @@
 <?php
 include 'config/dbconn.php';
+// Identify Driver from QR Code
+$driverId = null;
+$driverToken = $_GET['driver'] ?? '';
+
+if ($driverToken !== '' && preg_match('/^[a-f0-9]{64}$/i', $driverToken)) {
+    $driverToken = mysqli_real_escape_string($conn, $driverToken);
+
+    $driverQuery = mysqli_query($conn, "
+        SELECT admin_id
+        FROM admin
+        WHERE qr_token = '$driverToken'
+        AND role = 'driver'
+        LIMIT 1
+    ");
+
+    if ($driverQuery && mysqli_num_rows($driverQuery) > 0) {
+        $driver = mysqli_fetch_assoc($driverQuery);
+        $driverId = (int) $driver['admin_id'];
+    }
+}
 
 // Generate a secure device token
 $deviceToken = $_COOKIE['tour_device_token'] ?? '';
@@ -22,6 +42,21 @@ if ($tokenHash) {
         $tourSession = mysqli_fetch_assoc($result);
     }
 
+}
+
+// Assign existing Pending session to the scanned Driver
+if (
+    $tourSession &&
+    $tourSession['status'] === 'Pending' &&
+    $driverId !== null
+) {
+    mysqli_query($conn, "
+        UPDATE tour_sessions
+        SET admin_id = $driverId
+        WHERE tour_sessions_id = " . (int) $tourSession['tour_sessions_id'] . "
+    ");
+
+    $tourSession['admin_id'] = $driverId;
 }
 
 // Create a new session if none exists or previous session has ended/expired
@@ -62,21 +97,15 @@ if (
     $tourId = mysqli_real_escape_string($conn, $tourId);
     $accessCode = mysqli_real_escape_string($conn, $accessCode);
 
+    $driverIdValue = $driverId !== null ? (string) $driverId : 'NULL';
+
     $insert = mysqli_query($conn, "
         INSERT INTO tour_sessions (
-            tour_id,
-            access_code,
-            device_token_hash,
-            device_type,
-            browser,
-            last_activity_at
+            tour_id, admin_id, access_code, device_token_hash,
+            device_type, browser, last_activity_at
         ) VALUES (
-            '$tourId',
-            '$accessCode',
-            '$tokenHash',
-            '$deviceType',
-            '$browser',
-            NOW()
+            '$tourId', $driverIdValue, '$accessCode', '$tokenHash',
+            '$deviceType', '$browser', NOW()
         )
     ");
 

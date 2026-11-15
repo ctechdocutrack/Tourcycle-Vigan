@@ -1,5 +1,10 @@
 <?php
-session_start();
+require_once '../includes/admin-auth.php';
+
+if (($_SESSION['admin_role'] ?? '') !== 'admin') {
+    header('Location: ../access-management.php');
+    exit();
+}
 
 require_once '../../config/dbconn.php';
 
