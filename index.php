@@ -140,38 +140,51 @@ if (
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome | TourCycle Vigan</title>
 
+    <!-- Google Font: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap -->
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="node_modules/bootstrap-icons/font/bootstrap-icons.min.css">
 </head>
 
-<body>
+<body style="font-family: 'Poppins', sans-serif;">
 
     <!-- Welcome Screen -->
-    <main id="welcomeScreen" class="position-relative vh-100 overflow-hidden bg-dark">
+    <main id="welcomeScreen" class="position-relative vh-100 overflow-hidden">
 
-        <!-- Background Image -->
+        <!-- Full-Screen Background Image -->
         <img src="assets/images/calle-crisologo.jpg"
             alt="Calle Crisologo"
-            class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover opacity-50">
+            class="position-absolute top-0 start-0 w-100 h-100 object-fit-cover">
 
         <!-- Dark Overlay -->
-        <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
+        <div class="position-absolute top-0 start-0 w-100 h-100"
+            style="background: linear-gradient(rgba(10, 25, 45, 0.45), rgba(10, 25, 45, 0.75));">
+        </div>
 
         <!-- Welcome Content -->
         <div class="position-relative d-flex flex-column justify-content-center align-items-center text-center text-white h-100 p-4">
 
-            <img src="assets/images/Tourcycle Vigan.png" alt="TourCycle Vigan Logo" class="mb-4" style="width: 120px;">
+            <img src="assets/images/Tourcycle Vigan.png"
+                alt="TourCycle Vigan Logo"
+                class="mb-4"
+                style="width: 130px;">
 
-            <p class="text-uppercase fw-semibold text-warning mb-2">
+            <p class="text-uppercase fw-semibold mb-3"
+                style="color: #FACC15; letter-spacing: 3px; font-size: 0.85rem;">
                 Discover • Explore • Experience
             </p>
 
             <h1 class="display-3 fw-bold mb-3">
-                Welcome to<br>TourCycle Vigan
+                Welcome to<br>
+                <span style="color: #38BDF8;">The Heritage City of Vigan</span>
             </h1>
 
-            <p class="lead mb-5">
-                Discover the beauty, history, and heritage<br>
+            <p class="lead mb-5" style="max-width: 500px;">
+                Discover the beauty, history, and heritage
                 of the Historic City of Vigan.
             </p>
 
@@ -181,13 +194,15 @@ if (
 
                 <div class="d-flex align-items-center gap-3 px-2">
 
-                    <i class="bi bi-arrow-right-circle-fill text-success fs-2"></i>
+                    <i class="bi bi-arrow-right-circle-fill fs-2"
+                        style="color: #38BDF8;"></i>
 
                     <input type="range" id="startTourSlider"
                         class="form-range flex-grow-1 mb-0"
                         min="0" max="100" value="0">
 
-                    <i class="bi bi-chevron-double-right text-success"></i>
+                    <i class="bi bi-chevron-double-right"
+                        style="color: #38BDF8;"></i>
 
                 </div>
 
@@ -200,73 +215,121 @@ if (
         </div>
     </main>
 
+    
     <!-- Language Selection Screen -->
-    <main id="languageScreen" class="vh-100 bg-dark text-white d-none">
+    <main id="languageScreen" class="vh-100 bg-white text-dark d-none">
         <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center p-4">
 
-            <h2 class="fw-bold mb-3">Choose Your Language</h2>
+            <div class="mb-4">
+                <span class="badge rounded-pill px-3 py-2 mb-3"
+                    style="background-color: #E0F2FE; color: #0284C7;">
+                    TOURCYCLE VIGAN
+                </span>
 
-            <p class="text-white-50 mb-4">
-                Select your preferred language for the tour.
-            </p>
+                <h2 class="fw-bold mb-3" style="color: #1E293B;">
+                    Choose Your Language
+                </h2>
 
-            <div class="d-grid gap-3 w-100" style="max-width: 350px;">
+                <p class="text-secondary mb-0">
+                    Select your preferred language for the tour.
+                </p>
+            </div>
 
-                <button type="button" class="btn btn-light btn-lg language-option" data-language="en">
-                    🇺🇸 English
+            <div class="d-grid gap-3 w-100" style="max-width: 380px;">
+
+                <button type="button"
+                    class="btn btn-lg language-option bg-white border rounded-4 shadow-sm py-3 px-4"
+                    data-language="en">
+                    <span class="d-flex align-items-center justify-content-between">
+                        <span class="fw-semibold text-dark">English</span>
+                        <i class="bi bi-arrow-right-circle-fill fs-4" style="color: #38BDF8;"></i>
+                    </span>
                 </button>
 
-                <button type="button" class="btn btn-light btn-lg language-option" data-language="tl">
-                    🇵🇭 Tagalog
+                <button type="button"
+                    class="btn btn-lg language-option bg-white border rounded-4 shadow-sm py-3 px-4"
+                    data-language="tl">
+                    <span class="d-flex align-items-center justify-content-between">
+                        <span class="fw-semibold text-dark">Tagalog</span>
+                        <i class="bi bi-arrow-right-circle-fill fs-4" style="color: #F472B6;"></i>
+                    </span>
                 </button>
 
-                <button type="button" class="btn btn-light btn-lg language-option" data-language="ilo">
-                    🇵🇭 Ilokano
+                <button type="button"
+                    class="btn btn-lg language-option bg-white border rounded-4 shadow-sm py-3 px-4"
+                    data-language="ilo">
+                    <span class="d-flex align-items-center justify-content-between">
+                        <span class="fw-semibold text-dark">Ilokano</span>
+                        <i class="bi bi-arrow-right-circle-fill fs-4" style="color: #8B5CF6;"></i>
+                    </span>
                 </button>
 
             </div>
 
+            <small class="text-secondary mt-4">
+                Choose one language to continue your tour.
+            </small>
+
         </div>
     </main>
-
-        <!-- Access Pending Screen -->
-    <main id="pendingScreen" class="vh-100 bg-dark text-white d-none">
+    
+    <!-- Access Pending Screen -->
+    <main id="pendingScreen" class="vh-100 bg-white text-dark d-none">
         <div class="container h-100 d-flex flex-column justify-content-center align-items-center text-center p-4">
 
-            <i class="bi bi-hourglass-split text-warning display-1 mb-4"></i>
+            <!-- Status Icon -->
+            <div class="rounded-circle d-flex align-items-center justify-content-center mb-4"
+                style="width: 90px; height: 90px; background-color: #FEF9C3;">
 
-            <h2 id="accessStatusTitle" class="fw-bold mb-3">
+                <i class="bi bi-hourglass-split display-5" style="color: #CA8A04;"></i>
+
+            </div>
+
+            <!-- Access Status -->
+            <h2 id="accessStatusTitle" class="fw-bold mb-3" style="color: #1E293B;">
                 Waiting for Approval
             </h2>
 
-            <p id="accessStatusMessage" class="text-white-50 mb-4">
+            <p id="accessStatusMessage" class="text-secondary mb-4"
+                style="max-width: 400px;">
                 Please present your Tour ID to the administrator
                 and wait for your access to be activated.
             </p>
 
-            <div class="bg-white text-dark rounded-4 p-4 w-100" style="max-width: 350px;">
+            <!-- Tour ID Card -->
+            <div class="bg-white border rounded-4 shadow-sm p-4 w-100"
+                style="max-width: 380px;">
 
-                <small class="text-muted fw-semibold">YOUR TOUR ID</small>
+                <small class="text-secondary fw-semibold" style="letter-spacing: 1.5px;">
+                    YOUR TOUR ID
+                </small>
 
-                <h2 class="fw-bold text-primary my-3">
+                <h2 class="fw-bold my-3" style="color: #0284C7;">
                     <?= htmlspecialchars($tourSession['tour_id']) ?>
                 </h2>
 
-                <small class="text-muted">
+                <small class="text-secondary">
                     Show this ID to the administrator.
                 </small>
 
             </div>
 
+            <!-- Loading Indicator -->
             <div class="mt-4">
-                <div class="spinner-border text-warning" role="status"></div>
-                <p id="accessStatusDescription" class="text-white-50 mt-2 mb-0">
+
+                <div class="spinner-border" role="status"
+                    style="color: #38BDF8;">
+                </div>
+
+                <p id="accessStatusDescription" class="text-secondary mt-3 mb-0">
                     Waiting for admin activation...
                 </p>
+
             </div>
 
         </div>
     </main>
+
 
 
     <script>

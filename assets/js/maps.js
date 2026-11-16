@@ -167,20 +167,45 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==========================================
     // 5. DESTINATION MARKERS
     // ==========================================
+    function getDestinationCategoryIcon(category) {
 
+        switch (category) {
+
+            case 'Historical Landmark':
+                return { icon: 'fa-landmark', color: '#8B5CF6' };
+
+            case 'Church & Religious Site':
+                return { icon: 'fa-church', color: '#38BDF8' };
+
+            case 'Museum':
+                return { icon: 'fa-building-columns', color: '#FACC15' };
+
+            case 'Cultural Heritage':
+                return { icon: 'fa-palette', color: '#F472B6' };
+
+            case 'Nature & Wildlife':
+                return { icon: 'fa-tree', color: '#10B981' };
+
+            case 'Heritage Street':
+                return { icon: 'fa-road', color: '#FB923C' };
+
+            default:
+                return { icon: 'fa-location-dot', color: '#38BDF8' };
+        }
+    }
     
     function renderMapMarkers() {
 
         destinationMarkers.clearLayers();
 
         destinations.forEach(destination => {
-
+            const categoryStyle = getDestinationCategoryIcon(destination.category);
             const markerIcon = L.divIcon({
                 className: 'attraction-marker',
                 html: `
                     <div class="attraction-marker-wrapper">
-                        <div class="attraction-icon">
-                            <i class="bi bi-geo-alt-fill"></i>
+                        <div class="attraction-icon" style="background-color: ${categoryStyle.color};">
+                            <i class="fa-solid ${categoryStyle.icon}"></i>
                         </div>
                         <span class="attraction-label">${destination.name}</span>
                     </div>
@@ -431,6 +456,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const playAudioButton = document.getElementById('playAudio');
     const stopAudioButton = document.getElementById('stopAudio');
 
+    let audioStopped = false;
+
     playAudioButton.addEventListener('click', function () {
 
         if (!selectedDestination) {
@@ -454,7 +481,11 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        if (audioPlayer.src && !audioPlayer.ended) {
+        const requestedAudioUrl = new URL(audioPath, window.location.href).href;
+
+        if (audioPlayer.src === requestedAudioUrl && !audioPlayer.ended) {
+            audioStopped = false;
+
             audioPlayer.play().catch(function () {
                 audioStatus.textContent = 'Unable to resume audio.';
             });
@@ -462,6 +493,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         audioPlayer.pause();
+        audioStopped = true;
         audioPlayer.currentTime = 0;
 
         audioPlayer.src = audioPath;
@@ -473,6 +505,11 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         audioPlayer.onpause = function () {
+
+            if (audioStopped) {
+                return;
+            }
+
             audioStatus.textContent = 'Paused audio narration...';
             playAudioButton.innerHTML = '<i class="bi bi-play-fill me-1"></i> Play Audio';
         };
@@ -487,6 +524,8 @@ document.addEventListener('DOMContentLoaded', function () {
             audioStatus.textContent = 'Unable to play audio file.';
         };
 
+        audioStopped = false;
+
         audioPlayer.play().catch(function () {
             audioStatus.textContent = 'Unable to play audio file.';
         });
@@ -496,8 +535,11 @@ document.addEventListener('DOMContentLoaded', function () {
     // Stop Audio
     document.getElementById('stopAudio').addEventListener('click', function () {
 
+        audioStopped = true;
+
         audioPlayer.pause();
         audioPlayer.currentTime = 0;
+
         playAudioButton.innerHTML = '<i class="bi bi-play-fill me-1"></i> Play Audio';
 
         audioStatus.textContent = 'Audio narration stopped.';

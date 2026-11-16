@@ -124,7 +124,7 @@ include 'assets/includes/sidebar.php';
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #198754;
+        background: #38BDF8;
         color: white;
         border: 2px solid white;
         border-radius: 50%;
@@ -165,7 +165,7 @@ include 'assets/includes/sidebar.php';
         height: 75px;
         left: 7.5px;
         top: -17px;
-        background: rgba(13, 110, 253, 0.22);
+        background: rgba(56, 189, 248, 0.22);
         clip-path: polygon(50% 0%, 100% 100%, 50% 82%, 0% 100%);
         transform-origin: 50% 85%;
         pointer-events: none;
@@ -180,11 +180,11 @@ include 'assets/includes/sidebar.php';
         align-items: center;
         justify-content: center;
         background: white;
-        color: #0d6efd;
-        border: 3px solid #0d6efd;
+        color: #0284C7;
+        border: 3px solid #38BDF8;
         border-radius: 50%;
         font-size: 19px;
-        box-shadow: 0 0 12px rgba(13, 110, 253, 0.65);
+        box-shadow: 0 0 12px rgba(56, 189, 248, 0.65);
     }
 
     .navigation-arrow i {
@@ -197,10 +197,10 @@ include 'assets/includes/sidebar.php';
 
     @keyframes navigationPulse {
         0%, 100% {
-            filter: drop-shadow(0 0 3px rgba(13, 110, 253, 0.5));
+            filter: drop-shadow(0 0 3px rgba(56, 189, 248, 0.5));
         }
         50% {
-            filter: drop-shadow(0 0 10px rgba(13, 110, 253, 1));
+            filter: drop-shadow(0 0 10px rgba(56, 189, 248, 1));
         }
     }
 
@@ -255,7 +255,8 @@ include 'assets/includes/sidebar.php';
         <div class="p-3">
 
             <span id="mapDestinationCategory"
-                class="badge bg-success mb-2"></span>
+                class="badge mb-2 text-dark"
+                style="background-color: #FACC15;"></span>
 
             <h5 id="mapDestinationName" class="fw-bold mb-2"></h5>
 
@@ -274,7 +275,7 @@ include 'assets/includes/sidebar.php';
                 <div class="card-body">
 
                     <h5 class="fw-bold">
-                        <i class="bi bi-headphones text-success me-2"></i>
+                        <i class="bi bi-headphones me-2" style="color: #38BDF8;"></i>
                         Audio Tour Guide
                     </h5>
 
@@ -300,7 +301,7 @@ include 'assets/includes/sidebar.php';
                     <div class="d-flex flex-wrap gap-2">
 
                         <button type="button" id="playAudio"
-                            class="btn btn-success">
+                        class="btn text-white" style="background-color: #38BDF8; border-color: #38BDF8;">
                             <i class="bi bi-play-fill me-1"></i>
                             Play Audio
                         </button>
@@ -325,7 +326,7 @@ include 'assets/includes/sidebar.php';
             <div class="card bg-light border-0 mt-3">
                 <div class="card-body">
                     <h5 class="fw-bold">
-                        <i class="bi bi-signpost-2 text-success me-2"></i>
+                        <i class="bi bi-signpost-2 me-2" style="color: #38BDF8;"></i>
                         Route Guidance
                     </h5>
 
@@ -333,12 +334,12 @@ include 'assets/includes/sidebar.php';
                         Find the route from your current location to this destination.
                     </p>
 
-                    <button type="button" id="showRoute" class="btn btn-primary w-100">
+                    <button type="button" id="showRoute" class="btn text-white w-100" style="background-color: #38BDF8; border-color: #38BDF8;">
                         <i class="bi bi-map me-2"></i>
                         Show Route
                     </button>
 
-                    <button type="button" id="startNavigation" class="btn btn-success w-100 mt-2 d-none">
+                    <button type="button" id="startNavigation" class="btn text-white w-100 mt-2 d-none" style="background-color: #38BDF8; border-color: #38BDF8;">
                         <i class="bi bi-navigation me-2"></i>
                         Start Navigation
                     </button>
@@ -348,7 +349,8 @@ include 'assets/includes/sidebar.php';
                         End Navigation
                     </button>
 
-                    <div id="navigationStatus" class="alert alert-success small mt-3 mb-0 d-none">
+                    <div id="navigationStatus" class="alert small mt-3 mb-0 d-none"
+                        style="background-color: rgba(56, 189, 248, 0.12); color: #0284C7; border-color: rgba(56, 189, 248, 0.3);">
                         Navigation is ready.
                     </div>
 
@@ -360,7 +362,7 @@ include 'assets/includes/sidebar.php';
 
             <!-- Coordinates -->
             <div class="d-flex align-items-center gap-2 mt-4">
-                <i class="bi bi-geo-alt-fill text-success"></i>
+                <i class="bi bi-geo-alt-fill" style="color: #38BDF8;"></i>
 
                 <span id="destinationCoordinates"
                     class="small text-muted"></span>
@@ -374,8 +376,8 @@ include 'assets/includes/sidebar.php';
     </style>
     <!-- Reopen Destination Panel Button -->
     <button type="button" id="openMapPanel"
-        class="btn btn-success rounded-circle shadow position-absolute d-none"
-        style="bottom: 20px; right: 15px; width: 50px; height: 50px; z-index: 2000;">
+    class="btn text-white rounded-circle shadow position-absolute d-none"
+    style="background-color: #38BDF8; border-color: #38BDF8;">
         <i class="bi bi-info-lg"></i>
     </button>
 
@@ -387,7 +389,8 @@ include 'assets/includes/sidebar.php';
         style="z-index: 500;">
 
         <button type="button" id="locateMeMap"
-            class="btn btn-success shadow rounded-pill px-3">
+        class="btn text-white shadow rounded-pill px-3"
+        style="background-color: #38BDF8; border-color: #38BDF8;">
             <i class="bi bi-crosshair me-2"></i>
             My Location
         </button>

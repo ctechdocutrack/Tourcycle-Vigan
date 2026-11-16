@@ -52,7 +52,10 @@ document.addEventListener("DOMContentLoaded", function () {
             const button = document.createElement("button");
 
             button.type = "button";
-            button.className = "btn btn-outline-success rounded-pill";
+            button.className = "btn rounded-pill";
+            button.style.setProperty("background-color", "#FFFFFF", "important");
+            button.style.setProperty("border", "1px solid #38BDF8", "important");
+            button.style.setProperty("color", "#0284C7", "important");
             button.dataset.filter = category;
             button.textContent = category.charAt(0).toUpperCase() + category.slice(1);
 
@@ -80,16 +83,18 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
                     <img src="${destination.image}"
                         class="card-img-top object-fit-cover"
-                        height="190" alt="${destination.name}">
+                        height="190"
+                        style="object-fit: cover;"
+                        alt="${destination.name}">
 
                     <div class="card-body">
-                        <span class="badge bg-primary-subtle text-primary mb-2">${destination.category}</span>
-                        <h5 class="fw-bold">${destination.name}</h5>
-                        <p class="text-muted small destination-description" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${destination.description}</p>
-                        <button type="button" class="btn btn-link btn-sm p-0 show-description">Show more</button>
+                        <span class="badge mb-2" style="background-color: rgba(56, 189, 248, 0.15); color: #0284C7;">${destination.category}</span>
+                        <h5 class="fw-bold" style="color: #1E293B;">${destination.name}</h5>
+                        <p class="small destination-description" style="color: #64748B; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">${destination.description}</p>
+                        <button type="button" class="btn btn-link btn-sm p-0 show-description" style="color: #0284C7;">Show more</button>
 
                         <a href="maps.php?destination=${destination.id}"
-                            class="btn btn-outline-success w-100 rounded-pill mt-2">
+                            class="btn w-100 rounded-pill mt-2" style="color: #0284C7; border: 1px solid #38BDF8;">
                             <i class="bi bi-map me-2"></i>View on Map
                         </a>
                     </div>
@@ -166,12 +171,16 @@ document.addEventListener("DOMContentLoaded", function () {
         activeFilter = button.dataset.filter;
 
         destinationFilters.querySelectorAll("[data-filter]").forEach(function (filterButton) {
-            filterButton.classList.remove("btn-success", "active");
-            filterButton.classList.add("btn-outline-success");
+            filterButton.classList.remove("active", "text-white");
+            filterButton.style.backgroundColor = "#FFFFFF";
+            filterButton.style.borderColor = "#38BDF8";
+            filterButton.style.color = "#0284C7";
         });
 
-        button.classList.remove("btn-outline-success");
-        button.classList.add("btn-success", "active");
+        button.classList.add("active", "text-white");
+        button.style.backgroundColor = "#38BDF8";
+        button.style.borderColor = "#38BDF8";
+        button.style.color = "#FFFFFF";
 
         filterDestinations();
 
