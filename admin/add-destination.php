@@ -218,12 +218,11 @@ include 'includes/admin-header.php';
                                 <div class="row g-3">
                                     <div class="col-6">
                                         <label for="latitude" class="form-label fw-semibold small">Latitude</label>
-                                        <input type="text" class="form-control form-control-sm" id="latitude" name="latitude" placeholder="Not set" readonly>
+                                        <input type="number" step="any" class="form-control form-control-sm" id="latitude" name="latitude" placeholder="Enter latitude">
                                     </div>
-
                                     <div class="col-6">
                                         <label for="longitude" class="form-label fw-semibold small">Longitude</label>
-                                        <input type="text" class="form-control form-control-sm" id="longitude" name="longitude" placeholder="Not set" readonly>
+                                        <input type="number" step="any" class="form-control form-control-sm" id="longitude" name="longitude" placeholder="Enter longitude">
                                     </div>
                                 </div>
 
@@ -329,6 +328,53 @@ document.addEventListener("DOMContentLoaded", function () {
     map.on("click", function (event) {
         setDestinationMarker(event.latlng.lat, event.latlng.lng);
     });
+
+    // Manually Enter Coordinates
+    async function updateMapFromInputs() {
+
+        const latitude = parseFloat(document.getElementById("latitude").value);
+        const longitude = parseFloat(document.getElementById("longitude").value);
+
+        if (
+            Number.isNaN(latitude) ||
+            Number.isNaN(longitude) ||
+            latitude < -90 ||
+            latitude > 90 ||
+            longitude < -180 ||
+            longitude > 180
+        ) {
+            return;
+        }
+
+        setDestinationMarker(latitude, longitude);
+
+        // Automatically Find Address
+        const addressInput = document.getElementById("destinationAddress");
+
+        try {
+
+            const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`;
+
+            const response = await fetch(url);
+
+            if (!response.ok) {
+                throw new Error("Address lookup failed.");
+            }
+
+            const result = await response.json();
+
+            if (result.display_name) {
+                addressInput.value = result.display_name;
+            }
+
+        } catch (error) {
+            console.error("Reverse geocoding error:", error);
+        }
+
+    }
+
+    document.getElementById("latitude").addEventListener("change", updateMapFromInputs);
+    document.getElementById("longitude").addEventListener("change", updateMapFromInputs);
 
     // Find Location using OpenStreetMap Nominatim
     document.getElementById("findLocation").addEventListener("click", async function () {
